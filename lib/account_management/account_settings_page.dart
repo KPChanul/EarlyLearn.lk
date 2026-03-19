@@ -20,8 +20,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = widget.account.getName();
-    _emailController.text = widget.account.getEmail();
+    _nameController.text = widget.account.name;
+    _emailController.text = widget.account.email;
   }
 
   @override

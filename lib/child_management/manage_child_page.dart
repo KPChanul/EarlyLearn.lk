@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../account_management/account.dart';
 import '../account_management/home_page.dart';
-import '../child_management/child.dart';
+import 'child.dart';
 import '../widgets/child_avatar.dart';
 
 class ManageChildPage extends StatefulWidget {
@@ -103,7 +103,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
                           final child = childBoxValue.getAt(index);
                           final childName = child?.name ?? 'Unknown';
                           final isSelected =
-                              widget.account.getCurrentChild() == childName;
+                              widget.account.currentChild == childName;
 
                           return Card(
                             elevation: 4,
@@ -337,7 +337,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
               childBox.deleteAt(index);
 
               // If deleted child was current, set current to null
-              if (widget.account.getCurrentChild() == childName) {
+              if (widget.account.currentChild == childName) {
                 widget.account.setCurrentChild('');
               }
 
@@ -507,9 +507,24 @@ class _ManageChildPageState extends State<ManageChildPage> {
                   return;
                 }
 
+                // Check for duplicate names
+                final childName = nameController.text.trim();
+                for (int i = 0; i < childBox.length; i++) {
+                  final existingChild = childBox.getAt(i);
+                  if (existingChild?.name == childName) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('A child named "$childName" already exists!'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                }
+
                 // Create the child
                 final newChild = Child.create(
-                  name: nameController.text.trim(),
+                  name: childName,
                   dob: selectedDate!,
                 );
                 childBox.add(newChild);

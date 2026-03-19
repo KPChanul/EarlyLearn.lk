@@ -7,71 +7,77 @@ part 'account.g.dart';
 @HiveType(typeId: 1)
 class Account extends HiveObject {
   @HiveField(0)
-  String name;
+  String _name;
 
   @HiveField(1)
-  String email;
+  String _email;
 
   @HiveField(2)
-  String passwordHash;
+  String _passwordHash;
 
   @HiveField(3)
-  int loggedIn;
+  int _loggedIn;
 
   @HiveField(4)
-  String currentChild;
+  String _currentChild;
 
   Account({
-    required this.name,
-    required this.email,
-    required String password,
-    this.loggedIn = 0,
-    this.currentChild = '',
-  }) : passwordHash = sha256.convert(utf8.encode(password)).toString();
+    String name = '',
+    String email = '',
+    String password = '',
+    int loggedIn = 0,
+    String currentChild = '',
+  })  : _name = name,
+        _email = email,
+        _loggedIn = loggedIn,
+        _currentChild = currentChild,
+        _passwordHash = password.isEmpty 
+            ? '' 
+            : sha256.convert(utf8.encode(password)).toString();
 
   // ---------------------------
   // Getters
   // ---------------------------
-  String getName() => name;
-  String getEmail() => email;
-  String getCurrentChild() => currentChild;
-  int getLoggedIn() => loggedIn;
+  String get name => _name;
+  String get email => _email;
+  String get currentChild => _currentChild;
+  bool get isLoggedIn => _loggedIn == 1;
 
   bool verifyPassword(String password) {
     String hashed = sha256.convert(utf8.encode(password)).toString();
-    return hashed == passwordHash;
+    return hashed == _passwordHash;
   }
 
   // ---------------------------
   // Setters
   // ---------------------------
   void setName(String newName) {
-    name = newName;
+    _name = newName;
     save();
   }
 
   void setEmail(String newEmail) {
-    email = newEmail;
+    _email = newEmail;
     save();
   }
 
   void setPassword(String newPassword) {
-    passwordHash = sha256.convert(utf8.encode(newPassword)).toString();
+    _passwordHash = sha256.convert(utf8.encode(newPassword)).toString();
     save();
   }
 
   void logIn() {
-    loggedIn = 1;
+    _loggedIn = 1;
     save();
   }
 
   void logOut() {
-    loggedIn = 0;
+    _loggedIn = 0;
     save();
   }
 
   void setCurrentChild(String childName) {
-    currentChild = childName;
+    _currentChild = childName;
     save();
   }
 

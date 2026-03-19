@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Child? _getCurrentChild() {
-    final childName = widget.account.getCurrentChild();
+    final childName = widget.account.currentChild;
     if (childName.isEmpty) return null;
 
     for (int i = 0; i < childBox.length; i++) {
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(right: 8),
               child: Center(
                 child: Text(
-                  widget.account.getName(),
+                  widget.account.name,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),

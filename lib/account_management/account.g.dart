@@ -16,20 +16,12 @@ class AccountAdapter extends TypeAdapter<Account> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    
-    // Create with dummy password (will be overridden)
-    final account = Account(
-      name: fields[0] as String? ?? '',
-      email: fields[1] as String? ?? '',
-      password: 'dummy',  // Placeholder, will be replaced
-      loggedIn: fields[3] as int? ?? 0,
-      currentChild: fields[4] as String? ?? '',
-    );
-    
-    // Override passwordHash with the stored hashed value (don't re-hash)
-    account.passwordHash = fields[2] as String? ?? '';
-    
-    return account;
+    return Account()
+      .._name = fields[0] as String
+      .._email = fields[1] as String
+      .._passwordHash = fields[2] as String
+      .._loggedIn = fields[3] as int
+      .._currentChild = fields[4] as String;
   }
 
   @override
@@ -37,15 +29,15 @@ class AccountAdapter extends TypeAdapter<Account> {
     writer
       ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj._name)
       ..writeByte(1)
-      ..write(obj.email)
+      ..write(obj._email)
       ..writeByte(2)
-      ..write(obj.passwordHash)
+      ..write(obj._passwordHash)
       ..writeByte(3)
-      ..write(obj.loggedIn)
+      ..write(obj._loggedIn)
       ..writeByte(4)
-      ..write(obj.currentChild);
+      ..write(obj._currentChild);
   }
 
   @override

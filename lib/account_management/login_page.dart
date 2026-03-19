@@ -77,12 +77,12 @@ class _LoginPageState extends State<LoginPage> {
 
                     ElevatedButton.icon(
                       onPressed: () {
-                        if (_nameController.text == widget.account.getName() &&
+                        if (_nameController.text == widget.account.name &&
                             widget.account.verifyPassword(_passwordController.text)) {
                           widget.account.logIn();
                           
                           // Check if current child exists
-                          if (widget.account.getCurrentChild().isEmpty) {
+                          if (widget.account.currentChild.isEmpty) {
                             // Navigate to manage child page
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(

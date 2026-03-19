@@ -50,12 +50,12 @@ class MyApp extends StatelessWidget {
       }
 
       // Account not logged in - show login page
-      if (account.getLoggedIn() == 0) {
+      if (!account.isLoggedIn) {
         return LoginPage(account: account);
       }
 
       // Account logged in but no current child - show manage child page
-      if (account.getCurrentChild().isEmpty) {
+      if (account.currentChild.isEmpty) {
         return ManageChildPage(
           account: account,
           isRequired: true,
