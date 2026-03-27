@@ -1,0 +1,77 @@
+import 'package:hive_flutter/hive_flutter.dart';
+
+class LocalStorage {
+  static final LocalStorage _instance = LocalStorage._internal();
+  factory LocalStorage() => _instance;
+  LocalStorage._internal();
+
+  final String _scoreBoxName = 'userScoreBox';
+  final String _gameDataBoxName = 'gameDataBox';
+
+  Future<void> init() async {
+    await Hive.initFlutter();
+    await Hive.openBox(_scoreBoxName);
+    var gameBox = await Hive.openBox(_gameDataBoxName);
+
+    if (gameBox.isEmpty) {
+      await _seedGameDatabase(gameBox);
+    }
+  }
+
+  Future<void> _seedGameDatabase(Box box) async {
+    List<Map<String, dynamic>> level1Data = [
+      {
+        'question': 'රවුම සොයන්න',
+        'options': ['square', 'circle', 'triangle'],
+        'correctIndex': 1,
+        'hint': 'එය බෝලයක් වගේ!',
+      },
+      {
+        'question': 'කොටුව සොයන්න',
+        'options': ['triangle', 'star', 'square'],
+        'correctIndex': 2,
+        'hint': 'එය පෙට්ටියක් වගේ!',
+      },
+      {
+        'question': 'ත්‍රිකෝණය සොයන්න',
+        'options': ['triangle', 'circle', 'heart'],
+        'correctIndex': 0,
+        'hint': 'එය වහලයක් වගේ!',
+      },
+      {
+        'question': 'තරුව සොයන්න',
+        'options': ['square', 'star', 'circle'],
+        'correctIndex': 1,
+        'hint': 'එය අහසේ බබළනවා!',
+      },
+      {
+        'question': 'හදවත සොයන්න',
+        'options': ['heart', 'triangle', 'square'],
+        'correctIndex': 0,
+        'hint': 'එය ආදරය පෙන්වයි!',
+      },
+    ];
+    await box.put('level_1_quiz', level1Data);
+  }
+
+  List<Map<String, dynamic>> getLevelData(int level) {
+    var box = Hive.box(_gameDataBoxName);
+    var rawData = box.get('level_${level}_quiz', defaultValue: []);
+    List<Map<String, dynamic>> parsedData = [];
+    for (var item in rawData) {
+      parsedData.add(Map<String, dynamic>.from(item));
+    }
+    return parsedData;
+  }
+
+  void saveTotalScore(int points) {
+    var box = Hive.box(_scoreBoxName);
+    int currentScore = box.get('total_score', defaultValue: 0);
+    box.put('total_score', currentScore + points);
+  }
+
+  int getTotalScore() {
+    var box = Hive.box(_scoreBoxName);
+    return box.get('total_score', defaultValue: 0);
+  }
+}
