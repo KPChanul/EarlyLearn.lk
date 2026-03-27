@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'shape_learning/data/local_storage.dart';
-import 'shape_learning/screens/shape_game_screen.dart';
+import 'data/local_storage.dart';
+import './screens/shape_game_screen.dart';
 
 void main() async {
   // 1. Ensure Flutter bindings are ready before interacting with the database
