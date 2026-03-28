@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'game_data.dart'; 
+import 'widget_ialesson/toy_button.dart';
+import 'widget_ialesson/letter_painter.dart';
 
 // MAIN GAME SCREEN
 
@@ -357,66 +359,3 @@ class _PremiumKidsGameScreenState extends State<PremiumKidsGameScreen> {
   }
 }
 
-// ==========================================
-// REUSABLE UI COMPONENTS
-// ==========================================
-class ToyButton extends StatelessWidget {
-  final String text;
-  final Color color;
-  final VoidCallback onTap;
-  final bool isActive;
-  final IconData icon;
-
-  const ToyButton({super.key, required this.text, required this.color, required this.onTap, required this.isActive, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isActive ? onTap : null,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 300),
-        opacity: isActive ? 1.0 : 0.5,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white, width: 4),
-            boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 6))],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min, 
-            children: [
-              Icon(icon, color: Colors.white, size: 24),
-              const SizedBox(width: 8),
-              Text(text, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LetterPainter extends CustomPainter {
-  final List<Offset?> points;
-  LetterPainter(this.points);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 22, 128, 249) 
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 15.0; 
-
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(LetterPainter oldDelegate) => true;
-}
