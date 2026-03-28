@@ -1,193 +1,175 @@
 import 'package:flutter/material.dart';
-import '../controllers/base_game_controller.dart';
+import '../controllers/shape_game_controller.dart';
+import 'base_game_layout.dart';
+import 'shape_sorter_screen.dart';
 
-class BaseGameLayout extends StatelessWidget {
-  final BaseGameController controller; // It takes the engine!
-  final String title;
-  final Widget child;
-
-  const BaseGameLayout({
-    super.key,
-    required this.controller,
-    required this.title,
-    required this.child,
-  });
+// HERE IT IS! The ShapeGameScreen class!
+class ShapeGameScreen extends StatefulWidget {
+  const ShapeGameScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/level1_bg.png'),
-            fit: BoxFit.cover,
+  State<ShapeGameScreen> createState() => _ShapeGameScreenState();
+}
+
+class _ShapeGameScreenState extends State<ShapeGameScreen> {
+  final ShapeGameController _controller = ShapeGameController();
+  int _highlightedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.loadLevel(1);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _useHint() {
+    String hintText = _controller.getHint();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'උදව්වක්! (Hint)',
+          style: TextStyle(color: Colors.orange),
+        ),
+        content: Text(
+          hintText,
+          style: const TextStyle(fontSize: 24, color: Colors.deepPurple),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('හරි'),
+          ),
+        ],
+      ),
+    );
+    setState(
+      () =>
+          _highlightedIndex = _controller.getCurrentQuestion()['correctIndex'],
+    );
+  }
+
+  void onAnswerSelected(int index) {
+    bool isCorrect = _controller.checkAnswer(index);
+
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() => _highlightedIndex = -1);
+
+      if (!_controller.nextQuestion() &&
+          (_controller.isGameWon || _controller.isGameOver)) {
+        _showLevelCompleteDialog();
+      }
+    });
+  }
+
+  void _showLevelCompleteDialog() {
+    bool passed = _controller.isGameWon;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          passed ? 'නියමයි! මට්ටම සමත්! 🎉' : 'අයියෝ! අසමත්! 😢',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 28,
+            color: passed ? Colors.green : Colors.red,
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // --- UNIVERSAL HUD (Heads Up Display) ---
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 10.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Level & Score
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildBadge(
-                          'Level ${controller.currentLevel}',
-                          Colors.blueAccent,
-                        ),
-                        const SizedBox(height: 5),
-                        _buildBadge(
-                          'Score: ${controller.score} ⭐',
-                          Colors.orangeAccent,
-                        ),
-                      ],
-                    ),
-
-                    // Time, Lives & Pause Button
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '⏱️ ${controller.timeElapsedInSeconds}s',
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            // Draws the hearts dynamically!
-                            Row(
-                              children: List.generate(
-                                controller.maxLives,
-                                (index) => Icon(
-                                  index < controller.currentLives
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: Colors.redAccent,
-                                  size: 28,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        GestureDetector(
-                          onTap: controller.togglePause,
-                          child: _buildBadge(
-                            controller.isPaused ? 'Resume ▶️' : 'Pause ⏸️',
-                            controller.isPaused ? Colors.green : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // --- TITLE CARD ---
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 10,
-                ),
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white, width: 4),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // --- GAME CONTENT (With Auto-Pause Screen!) ---
-              Expanded(
-                child: controller.isPaused
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.pause_circle_filled,
-                              size: 100,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'Paused',
-                              style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : controller.isGameOver
-                    ? const Center(
-                        child: Text(
-                          'Game Over 💀',
-                          style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.redAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                    : child, // If not paused or dead, show the actual game!
-              ),
-            ],
-          ),
+        content: Text(
+          'මුළු ලකුණු: ${_controller.score}\nකාලය: ${_controller.timeElapsedInSeconds}s',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 24),
         ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (passed) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ShapeSorterScreen(),
+                    ),
+                  );
+                } else {
+                  _controller.loadLevel(1);
+                }
+              },
+              child: Text(
+                passed ? 'ඊළඟ මට්ටම ➡️' : 'නැවත උත්සාහ කරන්න 🔄',
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBadge(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: _controller,
+      builder: (context, child) {
+        if (_controller.getCurrentQuestion().isEmpty)
+          return const CircularProgressIndicator();
+
+        var questionData = _controller.getCurrentQuestion();
+        List<IconData> options = questionData['options'];
+
+        // It puts the game inside the BaseGameLayout here!
+        return BaseGameLayout(
+          controller: _controller,
+          title: questionData['question'],
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.lightbulb,
+                    color: Colors.orange,
+                    size: 40,
+                  ),
+                  onPressed: _useHint,
+                ),
+              ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(options.length, (index) {
+                  return GestureDetector(
+                    onTap: () => onAnswerSelected(index),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: _highlightedIndex == index
+                            ? Colors.yellow
+                            : Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.blueAccent, width: 4),
+                      ),
+                      child: Icon(
+                        options[index],
+                        size: 60,
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const Spacer(),
+            ],
+          ),
+        );
+      },
     );
   }
 }
