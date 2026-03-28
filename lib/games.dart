@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'game_data.dart'; 
 import 'widget_ialesson/toy_button.dart';
 import 'widget_ialesson/letter_painter.dart';
+import 'widget_ialesson/ialesson_bg.dart';
+import 'widget_ialesson/flashcard_display.dart';
 
 // MAIN GAME SCREEN
 
@@ -65,7 +67,7 @@ class _PremiumKidsGameScreenState extends State<PremiumKidsGameScreen> {
       });
     }
   }
-  // --- NEW: THE EXIT CONFIRMATION DIALOG ---
+  // EXIT CONFIRMATION DIALOG 
   void confirmExit() {
     showDialog(
       context: context,
@@ -123,86 +125,32 @@ class _PremiumKidsGameScreenState extends State<PremiumKidsGameScreen> {
       },
     );
   }
-  @override
+@override
   Widget build(BuildContext context) {
     final currentLesson = sinhalaAlphabet[currentIndex];
 
     return Scaffold(
       body: Stack(
         children: [
-          // --- BACKGROUND ---
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF87CEEB), Color(0xFFE0F6FF)], 
-                begin: Alignment.topCenter, end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-
-          // --- THE CLOUDS ---
-          const Positioned(top: 30, left: 60, child: Opacity(opacity: 0.8, child: Icon(Icons.cloud, color: Colors.white, size: 100))),
-          const Positioned(top: 20, right: 120, child: Opacity(opacity: 0.6, child: Icon(Icons.cloud, color: Colors.white, size: 70))),
-          const Positioned(top: 15, right: 350, child: Opacity(opacity: 0.5, child: Icon(Icons.cloud, color: Colors.white, size: 60))),
-          const Positioned(bottom: 110, right: 50, child: Opacity(opacity: 0.7, child: Icon(Icons.cloud, color: Colors.white, size: 40))),
-
-          // --- THE GRASS ---
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 100,
-              decoration: const BoxDecoration(
-                color: Color(0xFF7CFC00),
-                borderRadius: BorderRadius.only(topLeft: Radius.elliptical(200, 40), topRight: Radius.elliptical(200, 40)),
-              ),
-            ),
-          ),
+          // 1. THIS REPLACES ALL THE OLD BACKGROUND, CLOUDS, AND GRASS CODE!
+          const GameBackground(), 
 
           // --- FOREGROUND (Game Elements) ---
           SafeArea(
             child: Padding(
-              // Pushed the top padding down slightly so it doesn't overlap the new exit button
               padding: const EdgeInsets.only(top: 45.0, left: 15.0, right: 15.0, bottom: 15.0),
               child: Row(
                 children: [
                   
-                  // === LEFT SIDE: FLASHCARD & WORD BUTTON ===
+                  // === LEFT SIDE ===
                   Expanded(
                     flex: 3,
                     child: Column(
                       children: [
+                        
+                        // 2. THIS REPLACES THAT MASSIVE FLASHCARD CONTAINER!
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(25),
-                              border: Border.all(color: const Color(0xFF1E90FF), width: 6),
-                              boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 8))],
-                            ),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
-                                  child: Text(
-                                    currentLesson.word, 
-                                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF1E90FF), letterSpacing: 2)
-                                  ),
-                                ),
-                                Container(height: 4, color: const Color(0xFF1E90FF)),
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(19), bottomRight: Radius.circular(19)),
-                                    child: Image.asset(
-                                      currentLesson.imagePath, 
-                                      width: double.infinity, 
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          child: FlashcardDisplay(lesson: currentLesson)
                         ),
                         
                         const SizedBox(height: 15),
@@ -221,6 +169,7 @@ class _PremiumKidsGameScreenState extends State<PremiumKidsGameScreen> {
                   const SizedBox(width: 25),
 
                   // === RIGHT SIDE: TRACING BOARD & LETTER BUTTON ===
+                  // (This side stays exactly the same so your drawing logic still works)
                   Expanded(
                     flex: 5,
                     child: Column(
