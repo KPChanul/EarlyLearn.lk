@@ -1,5 +1,5 @@
 name: early_learn
-description: "A new Flutter project."
+description: "early Childhood educational app"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -38,6 +38,7 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
   google_fonts: ^8.0.2
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -49,7 +50,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.6
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
