@@ -6,7 +6,7 @@ class LocalStorage {
   LocalStorage._internal();
 
   final String _scoreBoxName = 'userScoreBox';
-  final String _gameDataBoxName = 'gameDataBox';
+  final String _gameDataBoxName = 'gameDataBox_v2';
 
   Future<void> init() async {
     await Hive.initFlutter();
@@ -21,32 +21,32 @@ class LocalStorage {
   Future<void> _seedGameDatabase(Box box) async {
     List<Map<String, dynamic>> level1Data = [
       {
-        'question': 'රවුම සොයන්න',
-        'options': ['square', 'circle', 'triangle'],
+        'question': 'රවුම සොයන්න (Find the Circle)',
+        'options': ['square', 'circle', 'triangle', 'star'],
         'correctIndex': 1,
         'hint': 'එය බෝලයක් වගේ!',
       },
       {
-        'question': 'කොටුව සොයන්න',
-        'options': ['triangle', 'star', 'square'],
+        'question': 'කොටුව සොයන්න (Find the Square)',
+        'options': ['triangle', 'star', 'square', 'heart'],
         'correctIndex': 2,
         'hint': 'එය පෙට්ටියක් වගේ!',
       },
       {
-        'question': 'ත්‍රිකෝණය සොයන්න',
-        'options': ['triangle', 'circle', 'heart'],
+        'question': 'ත්‍රිකෝණය සොයන්න (Find the Triangle)',
+        'options': ['triangle', 'circle', 'heart', 'square'],
         'correctIndex': 0,
         'hint': 'එය වහලයක් වගේ!',
       },
       {
-        'question': 'තරුව සොයන්න',
-        'options': ['square', 'star', 'circle'],
+        'question': 'තරුව සොයන්න (Find the Star)',
+        'options': ['square', 'star', 'circle', 'triangle'],
         'correctIndex': 1,
         'hint': 'එය අහසේ බබළනවා!',
       },
       {
-        'question': 'හදවත සොයන්න',
-        'options': ['heart', 'triangle', 'square'],
+        'question': 'හදවත සොයන්න (Find the Heart)',
+        'options': ['heart', 'triangle', 'square', 'circle'],
         'correctIndex': 0,
         'hint': 'එය ආදරය පෙන්වයි!',
       },

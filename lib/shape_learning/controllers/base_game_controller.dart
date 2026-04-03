@@ -9,14 +9,12 @@ abstract class BaseGameController extends ChangeNotifier {
   final SoundManager soundManager = SoundManager();
   final RewardManager rewardManager = RewardManager();
 
-  // --- CORE STATE ---
   int currentLevel = 1;
   int score = 0;
   bool isGameWon = false;
   bool isGameOver = false;
   bool isPaused = false;
 
-  // --- HEALTH & TIME ---
   int maxLives = 3;
   int currentLives = 3;
   Timer? _gameTimer;
@@ -33,7 +31,7 @@ abstract class BaseGameController extends ChangeNotifier {
 
     setupGameData();
     _startGameTimer();
-    notifyListeners(); // Tells the UI to redraw!
+    notifyListeners();
   }
 
   void togglePause() {
@@ -58,13 +56,12 @@ abstract class BaseGameController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- TIMER LOGIC ---
   void _startGameTimer() {
     _gameTimer?.cancel();
     _gameTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!isPaused && !isGameOver && !isGameWon) {
         timeElapsedInSeconds++;
-        notifyListeners(); // Updates the clock on the screen every second
+        notifyListeners();
       }
     });
   }
@@ -79,7 +76,6 @@ abstract class BaseGameController extends ChangeNotifier {
     super.dispose();
   }
 
-  // --- THE RULES EVERY GAME MUST FOLLOW ---
   void setupGameData();
   bool checkWinCondition();
 }

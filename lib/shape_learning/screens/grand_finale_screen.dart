@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/local_storage.dart';
 import '../logic/sound_manager.dart';
-// If you have a main menu to return to, import it here!
 
 class GrandFinaleScreen extends StatefulWidget {
   const GrandFinaleScreen({super.key});
@@ -21,17 +20,14 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
   @override
   void initState() {
     super.initState();
-    _finalScore = _storage
-        .getTotalScore(); // Fetch their total score from Hive!
+    _finalScore = _storage.getTotalScore();
 
-    // Play the win sound a couple of times for a celebration vibe
     _soundManager.playCorrectSound();
     Future.delayed(
       const Duration(milliseconds: 500),
       () => _soundManager.playCorrectSound(),
     );
 
-    // Make the shapes dance!
     _danceController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -59,7 +55,6 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // --- BOUNCING TITLE ---
               ScaleTransition(
                 scale: Tween(begin: 0.9, end: 1.1).animate(
                   CurvedAnimation(
@@ -84,7 +79,7 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                     ],
                   ),
                   child: const Text(
-                    'සුබ පැතුම්! 🎉', // "Congratulations!"
+                    'සුබ පැතුම්! 🎉',
                     style: TextStyle(
                       fontSize: 45,
                       fontWeight: FontWeight.w900,
@@ -95,7 +90,6 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
               ),
               const SizedBox(height: 30),
 
-              // --- THE DANCING SHAPES ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -107,7 +101,6 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
 
               const SizedBox(height: 40),
 
-              // --- SCORE CARD ---
               Container(
                 padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -131,7 +124,7 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                         fontWeight: FontWeight.bold,
                         color: Colors.green,
                       ),
-                    ), // "You are a shape hero!"
+                    ),
                     const SizedBox(height: 15),
                     Text(
                       'මුළු ලකුණු: $_finalScore ⭐',
@@ -147,7 +140,6 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
 
               const SizedBox(height: 50),
 
-              // --- FINISH BUTTON ---
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -162,7 +154,6 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                 ),
                 onPressed: () {
                   // Navigate back to your app's main menu here!
-                  // Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: const Text(
                   'අවසන් කරන්න (Finish)',
@@ -180,12 +171,10 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
     );
   }
 
-  // Helper widget to make shapes hop at different times
   Widget _buildDancingShape(IconData icon, Color color, int delay) {
     return AnimatedBuilder(
       animation: _danceController,
       builder: (context, child) {
-        // Creates a hopping effect using Sine math!
         double offset =
             (delay == 0
                 ? _danceController.value

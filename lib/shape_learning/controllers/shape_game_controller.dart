@@ -67,11 +67,11 @@ class ShapeGameController extends BaseGameController {
       comboCount++;
       int pointsEarned = 10 + (comboCount * 5);
       if (hintUsedForCurrent) pointsEarned = (pointsEarned / 2).round();
-      addScore(pointsEarned); // Uses the method from BaseGameController!
+      addScore(pointsEarned);
       soundManager.playCorrectSound();
     } else {
       comboCount = 0;
-      decreaseLife(); // Automatically handles the health bar!
+      decreaseLife();
     }
     return isCorrect;
   }
@@ -84,7 +84,6 @@ class ShapeGameController extends BaseGameController {
       return true;
     }
 
-    // Level is over!
     stopTimer();
     isGameWon = checkWinCondition();
     if (isGameWon) rewardManager.processGameResult(true, score);
