@@ -14,7 +14,7 @@ class _AlphabetGameScreenState extends State<AlphabetGameScreen> {
   final AudioManager _audioManager = AudioManager();
   
   String _feedbackMessage = "Listen to the word and choose the letter!";
-
+  bool _isProcessing = false;
   @override
   void initState() {
     super.initState();
@@ -27,26 +27,47 @@ class _AlphabetGameScreenState extends State<AlphabetGameScreen> {
     super.dispose();
   }
 
-  void _handleAnswer(String selected) {
+  Future<void> _handleAnswer(String selected) async {
+    // If the game is already waiting to move to the next question, ignore taps
+    if (_isProcessing) return; 
+
     var currentQ = _game.getCurrentQuestion()!;
     bool isCorrect = _game.checkAnswer(selected, currentQ.correctAnswer);
 
     _audioManager.playSfx(isCorrect);
 
-    setState(() {
-      if (isCorrect) {
+    if (isCorrect) {
+      // Step 1: Show "Correct" and lock the buttons
+      setState(() {
         _feedbackMessage = "Correct! 🎉";
+        _isProcessing = true; 
+      });
+
+      // Step 2: Wait for 1.5 seconds so the child can enjoy the success sound
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      // Step 3: Move to the next question and reset the screen
+      setState(() {
         _game.nextQuestion();
+        _isProcessing = false; // Unlock the buttons
         
         if (_game.getCurrentQuestion() == null) {
           _feedbackMessage = "Game Over! You scored ${_game.score}";
           _game.endGame();
+        } else {
+          // Reset the message for the new question!
+          _feedbackMessage = "Listen to the word and choose the letter!";
         }
-      } else {
+      });
+      
+    } else {
+      // If wrong, just show the try again message immediately
+      setState(() {
         _feedbackMessage = "Oops, try again! ❌";
-      }
-    });
+      });
+    }
   }
+  
 
   @override
   Widget build(BuildContext context) {
