@@ -7,6 +7,7 @@ class BaseGameLayout extends StatelessWidget {
   final Widget child;
   final VoidCallback onNextLevel;
   final VoidCallback onRetry;
+  final VoidCallback onExit;
 
   const BaseGameLayout({
     super.key,
@@ -15,6 +16,7 @@ class BaseGameLayout extends StatelessWidget {
     required this.child,
     required this.onNextLevel,
     required this.onRetry,
+    required this.onExit,
   });
 
   @override
@@ -30,6 +32,7 @@ class BaseGameLayout extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
+              // --- TOP HUD BAR ---
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
@@ -37,13 +40,44 @@ class BaseGameLayout extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // LEFT SIDE: Exit Button, Level, and Score
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildBadge(
-                          'Level ${controller.currentLevel}',
-                          Colors.blueAccent,
+                        Row(
+                          children: [
+                            // --- NEW PERSISTENT EXIT BUTTON ---
+                            GestureDetector(
+                              onTap: onExit,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: Colors.redAccent,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            // ----------------------------------
+                            _buildBadge(
+                              'Level ${controller.currentLevel}',
+                              Colors.blueAccent,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 5),
                         _buildBadge(
@@ -52,6 +86,8 @@ class BaseGameLayout extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                    // RIGHT SIDE: Timer, Hearts, and Pause
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -93,6 +129,8 @@ class BaseGameLayout extends StatelessWidget {
                   ],
                 ),
               ),
+
+              // --- TITLE CARD ---
               Container(
                 margin: const EdgeInsets.symmetric(
                   horizontal: 25,
@@ -122,6 +160,8 @@ class BaseGameLayout extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // --- THE GAME AREA ---
               Expanded(
                 child: controller.isPaused
                     ? _buildMenuScreen(
@@ -187,6 +227,7 @@ class BaseGameLayout extends StatelessWidget {
     );
   }
 
+  // Helper widget for the top HUD badges
   Widget _buildBadge(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -208,6 +249,7 @@ class BaseGameLayout extends StatelessWidget {
     );
   }
 
+  // Helper widget to draw the menus
   Widget _buildMenuScreen({
     required String title,
     required Color color,
@@ -270,6 +312,7 @@ class BaseGameLayout extends StatelessWidget {
     );
   }
 
+  // Helper widget for the big buttons
   Widget _buildMenuButton(String text, Color color, VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity,

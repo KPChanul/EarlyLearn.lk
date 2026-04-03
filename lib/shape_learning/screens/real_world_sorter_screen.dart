@@ -1,59 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
-import '../controllers/base_game_controller.dart';
+import 'package:flutter/services.dart';
+import '../controllers/real_world_sorter_controller.dart';
 import 'base_game_layout.dart';
 import 'grand_finale_screen.dart';
-
-class RealWorldSorterController extends BaseGameController {
-  final List<Map<String, dynamic>> _allItems = [
-    {'emoji': '🍕', 'type': Icons.change_history, 'name': 'පීසා (Pizza)'},
-    {'emoji': '⚽', 'type': Icons.circle, 'name': 'බෝලය (Ball)'},
-    {'emoji': '🎁', 'type': Icons.square, 'name': 'තෑග්ග (Gift)'},
-    {'emoji': '⏰', 'type': Icons.circle, 'name': 'ඔරලෝසුව (Clock)'},
-    {'emoji': '📺', 'type': Icons.square, 'name': 'රූපවාහිනිය (TV)'},
-  ];
-
-  late List<Map<String, dynamic>> gameQueue;
-  int currentItemIndex = 0;
-
-  @override
-  void setupGameData() {
-    gameQueue = List.from(_allItems)..shuffle(Random());
-    currentItemIndex = 0;
-  }
-
-  @override
-  bool checkWinCondition() {
-    return currentItemIndex >= gameQueue.length;
-  }
-
-  Map<String, dynamic>? getCurrentItem() {
-    if (currentItemIndex < gameQueue.length) {
-      return gameQueue[currentItemIndex];
-    }
-    return null;
-  }
-
-  void processDrop(IconData targetShape) {
-    var currentItem = getCurrentItem();
-    if (currentItem == null) return;
-
-    if (currentItem['type'] == targetShape) {
-      addScore(20);
-      soundManager.playCorrectSound();
-      currentItemIndex++;
-
-      if (checkWinCondition()) {
-        isGameWon = true;
-        stopTimer();
-        rewardManager.processGameResult(true, score);
-      }
-    } else {
-      decreaseLife();
-    }
-    notifyListeners();
-  }
-}
 
 class RealWorldSorterScreen extends StatefulWidget {
   const RealWorldSorterScreen({super.key});
@@ -77,6 +26,42 @@ class _RealWorldSorterScreenState extends State<RealWorldSorterScreen> {
     super.dispose();
   }
 
+  void _confirmExit() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'පිටවෙන්නද? (Exit?)',
+          style: TextStyle(
+            color: Colors.redAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'ඔබට නිසැකවම ක්‍රීඩාවෙන් ඉවත් වීමට අවශ්‍යද?',
+          style: TextStyle(fontSize: 20),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'නැත (No)',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => SystemNavigator.pop(),
+            child: const Text(
+              'ඔව් (Yes)',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -92,6 +77,7 @@ class _RealWorldSorterScreenState extends State<RealWorldSorterScreen> {
             MaterialPageRoute(builder: (_) => const GrandFinaleScreen()),
           ),
           onRetry: () => _controller.loadLevel(2),
+          onExit: _confirmExit,
           child: Column(
             children: [
               const SizedBox(height: 20),

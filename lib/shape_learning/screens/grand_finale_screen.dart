@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../data/local_storage.dart';
 import '../logic/sound_manager.dart';
 
@@ -153,7 +154,7 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                   elevation: 10,
                 ),
                 onPressed: () {
-                  // Navigate back to your app's main menu here!
+                  SystemNavigator.pop();
                 },
                 child: const Text(
                   'අවසන් කරන්න (Finish)',

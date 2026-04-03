@@ -6,7 +6,8 @@ class LocalStorage {
   LocalStorage._internal();
 
   final String _scoreBoxName = 'userScoreBox';
-  final String _gameDataBoxName = 'gameDataBox_v2';
+  // v4 forces the phone to download the new Level 2 data!
+  final String _gameDataBoxName = 'gameDataBox_v4';
 
   Future<void> init() async {
     await Hive.initFlutter();
@@ -19,6 +20,7 @@ class LocalStorage {
   }
 
   Future<void> _seedGameDatabase(Box box) async {
+    // --- LEVEL 1 DATA ---
     List<Map<String, dynamic>> level1Data = [
       {
         'question': 'රවුම සොයන්න (Find the Circle)',
@@ -52,6 +54,16 @@ class LocalStorage {
       },
     ];
     await box.put('level_1_quiz', level1Data);
+
+    // --- LEVEL 2 DATA ---
+    List<Map<String, dynamic>> level2Data = [
+      {'emoji': '🍕', 'type': 'triangle', 'name': 'පීසා (Pizza)'},
+      {'emoji': '⚽', 'type': 'circle', 'name': 'බෝලය (Ball)'},
+      {'emoji': '🎁', 'type': 'square', 'name': 'තෑග්ග (Gift)'},
+      {'emoji': '⏰', 'type': 'circle', 'name': 'ඔරලෝසුව (Clock)'},
+      {'emoji': '📺', 'type': 'square', 'name': 'රූපවාහිනිය (TV)'},
+    ];
+    await box.put('level_2_quiz', level2Data);
   }
 
   List<Map<String, dynamic>> getLevelData(int level) {

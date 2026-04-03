@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../controllers/shape_game_controller.dart';
 import 'base_game_layout.dart';
 import 'real_world_sorter_screen.dart';
@@ -61,6 +62,42 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
     });
   }
 
+  void _confirmExit() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'පිටවෙන්නද? (Exit?)',
+          style: TextStyle(
+            color: Colors.redAccent,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'ඔබට නිසැකවම ක්‍රීඩාවෙන් ඉවත් වීමට අවශ්‍යද?',
+          style: TextStyle(fontSize: 20),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'නැත (No)',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => SystemNavigator.pop(),
+            child: const Text(
+              'ඔව් (Yes)',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Color _getShapeColor(IconData icon) {
     if (icon == Icons.favorite) return Colors.redAccent;
     if (icon == Icons.square) return Colors.blueAccent;
@@ -92,6 +129,7 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
             _controller.loadLevel(1);
             setState(() => _highlightedIndex = -1);
           },
+          onExit: _confirmExit,
           child: Column(
             children: [
               Align(
