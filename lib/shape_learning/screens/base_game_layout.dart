@@ -193,12 +193,12 @@ class BaseGameLayout extends StatelessWidget {
                             'මුළු ලකුණු: ${controller.score}\nගතවූ කාලය: ${controller.timeElapsedInSeconds}s',
                         buttons: [
                           _buildMenuButton(
-                            'ඊළඟ මට්ටම ➡️',
+                            'ඊළඟ මට්ටම',
                             Colors.blue,
                             onNextLevel,
                           ),
                           _buildMenuButton(
-                            'නැවත ක්‍රීඩා කරන්න 🔄',
+                            'නැවත ක්‍රීඩා කරන්න',
                             Colors.orange,
                             onRetry,
                           ),
@@ -212,7 +212,7 @@ class BaseGameLayout extends StatelessWidget {
                         subtitle: 'ඔබගේ ජීවිත අවසන්.',
                         buttons: [
                           _buildMenuButton(
-                            'නැවත උත්සාහ කරන්න 🔄',
+                            'නැවත උත්සාහ කරන්න',
                             Colors.orange,
                             onRetry,
                           ),

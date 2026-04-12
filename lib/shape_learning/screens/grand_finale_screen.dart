@@ -80,7 +80,7 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                     ],
                   ),
                   child: const Text(
-                    'සුබ පැතුම්! 🎉',
+                    'සුබ පැතුම්!',
                     style: TextStyle(
                       fontSize: 45,
                       fontWeight: FontWeight.w900,
