@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../account_management/account.dart';
-import '../account_management/home_page.dart';
+import 'package:early_learn/main_app.dart';
 import 'child.dart';
 import '../widgets/child_avatar.dart';
 
@@ -229,7 +229,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => HomePage(account: widget.account),
+            builder: (_) => MainApp(),
           ),
         );
       }
@@ -550,7 +550,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
                     Navigator.pushReplacement(
                       this.context,
                       MaterialPageRoute(
-                        builder: (_) => HomePage(account: widget.account),
+                        builder: (_) => MainApp(),
                       ),
                     );
                   }

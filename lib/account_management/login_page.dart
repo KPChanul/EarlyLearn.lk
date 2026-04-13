@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'account.dart';
-import 'home_page.dart';
+import '../main_app.dart';
 import '../child_management/manage_child_page.dart';
 class LoginPage extends StatefulWidget {
   final Account account;
@@ -94,10 +94,10 @@ class _LoginPageState extends State<LoginPage> {
                               (route) => false,
                             );
                           } else {
-                            // Navigate to home page
+                            // Navigate to main app
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                builder: (_) => HomePage(account: widget.account),
+                                builder: (_) => const MainApp(),
                               ),
                               (route) => false,
                             );

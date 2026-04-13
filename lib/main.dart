@@ -1,67 +1,77 @@
-import 'package:early_learn/pages/acc_page/account_page.dart';
-import 'package:early_learn/pages/home_page/home_page.dart';
-import 'package:early_learn/pages/map_page/map_page.dart';
-import 'package:early_learn/pages/reward_page/reward_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-// import 'package:mine/pages/acc_page/account_page.dart';
-// import 'package:mine/pages/home_page/home_page.dart';
-// import 'package:mine/pages/map_page/map_page.dart';
-// import 'package:mine/pages/reward_page/reward_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'account_management/account.dart';
+import 'account_management/login_page.dart';
+import 'account_management/create_account_page.dart';
+import 'package:early_learn/main_app.dart';
+import 'child_management/manage_child_page.dart';
+import 'child_management/child.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register adapters - MUST be before opening boxes
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(ChildAdapter());
+  }
+  if (!Hive.isAdapterRegistered(1)) {
+    Hive.registerAdapter(AccountAdapter());
+  }
+
+  // Open Hive boxes
+  await Hive.openBox<Account>('accounts');
+  await Hive.openBox<Child>('children');
+
+  runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-
-  int _maincurrentIndex = 0;
-
-  final List <Widget> pages = [
-    HomePage(),
-    MapPage(),
-    RewardPage(),
-    AccountPage(),
-  ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'EarlyLearn.lk',
+      theme: ThemeData(primarySwatch: Colors.blue),
       debugShowCheckedModeBanner: false,
-      title: "Early Learn",
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-        textTheme: GoogleFonts.interTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          currentIndex: _maincurrentIndex,
-          onTap: (index) {
-            setState(() {
-              _maincurrentIndex = index;
-            });
-          },
-
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home),label: "HOME"),
-            BottomNavigationBarItem(icon: Icon(Icons.map),label: "MAP"),
-            BottomNavigationBarItem(icon: Icon(Icons.gif_box_sharp),label: "REWARD"),
-            BottomNavigationBarItem(icon: Icon(Icons.person),label: "PROFILE"),
-          ],
-        ),
-        body: pages[_maincurrentIndex],
-      ),
+      home: _buildHome(),
     );
+  }
+
+  Widget _buildHome() {
+    try {
+      final accountBox = Hive.box<Account>('accounts');
+      final account = accountBox.isNotEmpty ? accountBox.values.first : null;
+
+      // No account - show create account page
+      if (account == null) {
+        return CreateAccountPage(account: account);
+      }
+
+      // Account not logged in - show login page
+      if (!account.isLoggedIn) {
+        return LoginPage(account: account);
+      }
+
+      // Account logged in but no current child - show manage child page
+      if (account.currentChild.isEmpty) {
+        return ManageChildPage(
+          account: account,
+          isRequired: true,
+        );
+      }
+
+      // Account logged in and has current child - show home page
+      return MainApp();
+    } catch (e) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error initializing app: $e'),
+        ),
+      );
+    }
   }
 }
