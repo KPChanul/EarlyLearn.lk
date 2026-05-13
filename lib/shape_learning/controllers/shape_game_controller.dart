@@ -56,6 +56,7 @@ class ShapeGameController extends BaseGameController {
     }
   }
 
+<<<<<<< HEAD
   Map<String, dynamic> getCurrentQuestion() {
     if (_questions.isEmpty) {
       return {
@@ -77,6 +78,22 @@ class ShapeGameController extends BaseGameController {
 
     return _questions[currentQuestionIndex];
   }
+=======
+  //Map<String, dynamic> getCurrentQuestion() => _questions[currentQuestionIndex];
+  // In shape_game_controller.dart
+  Map<String, dynamic> getCurrentQuestion() {
+  if (_questions.isEmpty) {
+    // Return a temporary "Loading" state map instead of crashing
+    return {
+      'question': 'පූරණය වෙමින්...', // Loading...
+      'options': [Icons.help, Icons.help, Icons.help, Icons.help],
+      'correctIndex': 0,
+      'hint': '',
+    };
+  }
+  return _questions[currentQuestionIndex];
+}
+>>>>>>> db5b82d3ba2abad1ef0664b42908b65b3a3f84aa
 
   String getHint() {
     if (_questions.isEmpty) return 'කරුණාකර රැඳී සිටින්න (Please wait)';
