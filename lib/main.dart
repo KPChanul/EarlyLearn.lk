@@ -24,6 +24,8 @@ void main() async {
   // Open Hive boxes
   await Hive.openBox<Account>('accounts');
   await Hive.openBox<Child>('children');
+  await Hive.openBox('userScoreBox');
+  await Hive.openBox('gameDataBox_v4');
 
   runApp(MyApp());
 }
@@ -58,20 +60,13 @@ class MyApp extends StatelessWidget {
 
       // Account logged in but no current child - show manage child page
       if (account.currentChild.isEmpty) {
-        return ManageChildPage(
-          account: account,
-          isRequired: true,
-        );
+        return ManageChildPage(account: account, isRequired: true);
       }
 
       // Account logged in and has current child - show home page
       return MainApp();
     } catch (e) {
-      return Scaffold(
-        body: Center(
-          child: Text('Error initializing app: $e'),
-        ),
-      );
+      return Scaffold(body: Center(child: Text('Error initializing app: $e')));
     }
   }
 }
