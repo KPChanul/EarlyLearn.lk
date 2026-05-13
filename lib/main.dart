@@ -1,3 +1,4 @@
+import 'package:early_learn/shape_learning/data/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'account_management/account.dart';
@@ -24,8 +25,10 @@ void main() async {
   // Open Hive boxes
   await Hive.openBox<Account>('accounts');
   await Hive.openBox<Child>('children');
-  await Hive.openBox('userScoreBox');
-  await Hive.openBox('gameDataBox_v4');
+  // await Hive.openBox('userScoreBox');
+  // await Hive.openBox('gameDataBox_v4');
+
+  await LocalStorage().init();
   
 
   runApp(MyApp());
