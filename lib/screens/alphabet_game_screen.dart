@@ -332,42 +332,91 @@ class _AlphabetGameScreenState extends State<AlphabetGameScreen>
   // ── Game Body ──────────────────────────────────────────────────────────────
 
   Widget _buildGameBody(currentQ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 18),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 18),
 
-          // Score badge
-          _buildScoreBadge(),
-          const SizedBox(height: 16),
+        // Score badge
+        _buildScoreBadge(),
+        const SizedBox(height: 18),
 
-          // Image card — takes all remaining space above the buttons
-          Expanded(
-            child: ScaleTransition(
-              scale: _cardScaleAnim,
-              child: _buildQuestionCard(currentQ),
-            ),
+        // ── Question Text Box ─────────────────────────────
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
           ),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF4FC3F7),
+                Color(0xFF1976D2),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x331976D2),
+                blurRadius: 12,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: const Row(
+            children: [
+              Icon(
+                Icons.menu_book_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+              SizedBox(width: 12),
 
-          const SizedBox(height: 20),
+              Expanded(
+                child: Text(
+                  "රූපයට අදාළ පළමු අකුර තෝරන්න",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
 
-          // Answer buttons sit just below the card
-          _buildAnswerButtons(currentQ),
+        const SizedBox(height: 20),
 
-          const SizedBox(height: 12),
+        // ── Image Card ───────────────────────────────────
+        Expanded(
+          child: ScaleTransition(
+            scale: _cardScaleAnim,
+            child: _buildQuestionCard(currentQ),
+          ),
+        ),
 
-          // Feedback — only visible when there is something to say
-          if (_feedbackMessage.isNotEmpty) _buildFeedbackBanner(),
+        const SizedBox(height: 20),
 
-          // This spacer pushes the letters up and controls the image card size
-          const SizedBox(height: 40),
-        ],
-      ),
-    );
-  }
+        // Answer buttons
+        _buildAnswerButtons(currentQ),
 
+        const SizedBox(height: 12),
+
+        // Feedback banner
+        if (_feedbackMessage.isNotEmpty) _buildFeedbackBanner(),
+
+        const SizedBox(height: 40),
+      ],
+    ),
+  );
+}
   // ── Score Badge ────────────────────────────────────────────────────────────
 
   Widget _buildScoreBadge() {
