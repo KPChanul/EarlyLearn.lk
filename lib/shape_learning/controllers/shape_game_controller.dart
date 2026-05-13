@@ -11,18 +11,22 @@ class ShapeGameController extends BaseGameController {
   void setupGameData() {
     var rawDatabaseData = storage.getLevelData(currentLevel);
 
-    _questions = rawDatabaseData.map((q) {
-      List<String> stringOptions = List<String>.from(q['options']);
-      List<IconData> iconOptions = stringOptions
-          .map((str) => _getIconFromString(str))
-          .toList();
-      return {
-        'question': q['question'],
-        'options': iconOptions,
-        'correctIndex': q['correctIndex'],
-        'hint': q['hint'],
-      };
-    }).toList();
+    if (rawDatabaseData.isEmpty) {
+      _questions = [];
+    } else {
+      _questions = rawDatabaseData.map((q) {
+        List<String> stringOptions = List<String>.from(q['options']);
+        List<IconData> iconOptions = stringOptions
+            .map((str) => _getIconFromString(str))
+            .toList();
+        return {
+          'question': q['question'],
+          'options': iconOptions,
+          'correctIndex': q['correctIndex'],
+          'hint': q['hint'],
+        };
+      }).toList();
+    }
 
     currentQuestionIndex = 0;
     comboCount = 0;
@@ -31,6 +35,7 @@ class ShapeGameController extends BaseGameController {
 
   @override
   bool checkWinCondition() {
+    if (_questions.isEmpty) return false;
     return score >= (_questions.length * 10) / 2;
   }
 
@@ -51,15 +56,39 @@ class ShapeGameController extends BaseGameController {
     }
   }
 
-  Map<String, dynamic> getCurrentQuestion() => _questions[currentQuestionIndex];
+  Map<String, dynamic> getCurrentQuestion() {
+    if (_questions.isEmpty) {
+      return {
+        'question': 'දත්ත පූරණය වෙමින් පවතී...\n(Loading...)',
+        'options': [
+          Icons.circle,
+          Icons.square,
+          Icons.star,
+          Icons.change_history,
+        ],
+        'correctIndex': 0,
+        'hint': 'කරුණාකර රැඳී සිටින්න (Please wait)',
+      };
+    }
+
+    if (currentQuestionIndex >= _questions.length) {
+      currentQuestionIndex = 0;
+    }
+
+    return _questions[currentQuestionIndex];
+  }
 
   String getHint() {
+    if (_questions.isEmpty) return 'කරුණාකර රැඳී සිටින්න (Please wait)';
+
     hintUsedForCurrent = true;
     notifyListeners();
     return _questions[currentQuestionIndex]['hint'];
   }
 
   bool checkAnswer(int selectedIndex) {
+    if (_questions.isEmpty) return false;
+
     bool isCorrect =
         selectedIndex == _questions[currentQuestionIndex]['correctIndex'];
 
@@ -77,6 +106,8 @@ class ShapeGameController extends BaseGameController {
   }
 
   bool nextQuestion() {
+    if (_questions.isEmpty) return false;
+
     if (currentQuestionIndex < _questions.length - 1) {
       currentQuestionIndex++;
       hintUsedForCurrent = false;
