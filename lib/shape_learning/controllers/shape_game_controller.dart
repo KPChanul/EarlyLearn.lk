@@ -51,7 +51,20 @@ class ShapeGameController extends BaseGameController {
     }
   }
 
-  Map<String, dynamic> getCurrentQuestion() => _questions[currentQuestionIndex];
+  //Map<String, dynamic> getCurrentQuestion() => _questions[currentQuestionIndex];
+  // In shape_game_controller.dart
+  Map<String, dynamic> getCurrentQuestion() {
+  if (_questions.isEmpty) {
+    // Return a temporary "Loading" state map instead of crashing
+    return {
+      'question': 'පූරණය වෙමින්...', // Loading...
+      'options': [Icons.help, Icons.help, Icons.help, Icons.help],
+      'correctIndex': 0,
+      'hint': '',
+    };
+  }
+  return _questions[currentQuestionIndex];
+}
 
   String getHint() {
     hintUsedForCurrent = true;
