@@ -26,6 +26,7 @@ void main() async {
   await Hive.openBox<Child>('children');
   await Hive.openBox('userScoreBox');
   await Hive.openBox('gameDataBox_v4');
+  
 
   runApp(MyApp());
 }
