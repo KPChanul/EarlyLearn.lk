@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../controllers/learning_controller.dart';
+import 'package:early_learn/shape_learning/screens/shape_game_screen.dart';
 
 class VideoLearningScreen extends StatefulWidget {
   const VideoLearningScreen({super.key});
@@ -28,7 +29,8 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
   void _confirmExit() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
+        // <-- Added dialogContext
         title: const Text(
           'පිටවෙන්නද? (Exit?)',
           style: TextStyle(
@@ -42,7 +44,8 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () =>
+                Navigator.pop(dialogContext), // 1. Close only dialog
             child: const Text(
               'නැත (No)',
               style: TextStyle(fontSize: 18, color: Colors.grey),
@@ -50,7 +53,12 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            onPressed: () => SystemNavigator.pop(),
+            onPressed: () {
+              Navigator.pop(dialogContext); // 1. Close the dialog
+              Navigator.pop(
+                context,
+              ); // 2. Close the video screen (Reveals Map!)
+            },
             child: const Text(
               'ඔව් (Yes)',
               style: TextStyle(fontSize: 18, color: Colors.white),
@@ -365,10 +373,14 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
               ),
             ),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Going to next stage...')),
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ShapeGameScreen(),
+                ),
               );
             },
+
             child: const Row(
               children: [
                 Text(
