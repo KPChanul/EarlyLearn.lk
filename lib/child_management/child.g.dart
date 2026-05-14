@@ -20,19 +20,22 @@ class ChildAdapter extends TypeAdapter<Child> {
       fields[0] as String,
       fields[1] as DateTime,
       (fields[2] as Map).cast<int, int>(),
+      (fields[3] as Map?)?.cast<String, int>() ?? {}, // Added the new field with a fallback
     );
   }
 
   @override
   void write(BinaryWriter writer, Child obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4) // Updated from 3 to 4 total fields
       ..writeByte(0)
       ..write(obj._name)
       ..writeByte(1)
       ..write(obj._dob)
       ..writeByte(2)
-      ..write(obj._stages);
+      ..write(obj._stages)
+      ..writeByte(3) // Added the new quizMarks field
+      ..write(obj.quizMarks); 
   }
 
   @override

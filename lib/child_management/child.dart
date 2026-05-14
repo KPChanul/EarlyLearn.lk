@@ -13,12 +13,16 @@ class Child extends HiveObject {
   @HiveField(2)
   Map<int, int> _stages;
 
-  // Constructor
-  Child(this._name, this._dob, this._stages);
+  // Changed to 3 to avoid conflicting with _dob (1) and _stages (2)
+  @HiveField(3)
+  Map<String, int> quizMarks;
 
-  // Factory for creating new child
+  // Constructor updated to include quizMarks
+  Child(this._name, this._dob, this._stages, this.quizMarks);
+
+  // Factory updated to initialize an empty map for quizMarks
   factory Child.create({required String name, required DateTime dob}) {
-    return Child(name, dob, {1: 0, 2: 0, 3: 0});
+    return Child(name, dob, {1: 0, 2: 0, 3: 0}, {});
   }
 
   // Getters
@@ -48,5 +52,15 @@ class Child extends HiveObject {
   int getStageValue(int stage) {
     if (_stages.containsKey(stage)) return _stages[stage]!;
     throw Exception("Stage $stage does not exist");
+  }
+
+  // Helper method to save or update a quiz mark
+  void saveQuizMark(String quizId, int mark) {
+    // Only update if the new mark is higher
+    int currentMark = quizMarks[quizId] ?? 0;
+    if (mark > currentMark) {
+      quizMarks[quizId] = mark;
+      save(); 
+    }
   }
 }
