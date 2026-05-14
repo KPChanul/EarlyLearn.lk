@@ -390,7 +390,7 @@ class _GrandFinaleScreenState extends State<GrandFinaleScreen>
                               borderRadius: BorderRadius.circular(32),
                             ),
                           ),
-                          onPressed: () => SystemNavigator.pop(),
+                          onPressed: () => Navigator.pop(context),
                           child: Ink(
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(

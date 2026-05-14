@@ -206,7 +206,7 @@ class BaseGameLayout extends StatelessWidget {
                             onPressed: onNextLevel,
                           ),
                           _buildMenuButton(
-                            label: 'නැවත ක්‍රීඩා',
+                            label: 'නැවත ක්‍රීඩාකරන්න',
                             sublabel: 'Play Again',
                             gradient: const LinearGradient(
                               colors: [Color(0xFFFF922B), Color(0xFFFFD93D)],
@@ -217,12 +217,12 @@ class BaseGameLayout extends StatelessWidget {
                       )
                     : controller.isGameOver
                     ? _buildMenuScreen(
-                        title: 'අයියෝ! 😢',
+                        title: 'Oops!',
                         config: _MenuConfig.lose(),
-                        subtitle: 'ජීවිත අවසන් — නැවත උත්සාහ කරන්න!',
+                        subtitle: 'ඔබගේ අවස්ථාවන් අවසානයි!',
                         buttons: [
                           _buildMenuButton(
-                            label: 'නැවත උත්සාහ',
+                            label: 'නැවත උත්සාහ කරන්න',
                             sublabel: 'Try Again',
                             gradient: const LinearGradient(
                               colors: [Color(0xFFFF6B6B), Color(0xFFFF922B)],
