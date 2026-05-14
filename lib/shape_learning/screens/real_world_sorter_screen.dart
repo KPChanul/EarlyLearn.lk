@@ -91,18 +91,19 @@ class _RealWorldSorterScreenState extends State<RealWorldSorterScreen> {
                             color: Colors.transparent,
                             child: Text(
                               currentItem['emoji'],
-                              style: const TextStyle(fontSize: 120),
+                              style: const TextStyle(fontSize: 150),
                             ),
                           ),
                           childWhenDragging: Opacity(
                             opacity: 0.3,
                             child: Text(
                               currentItem['emoji'],
-                              style: const TextStyle(fontSize: 100),
+                              style: const TextStyle(fontSize: 130),
                             ),
                           ),
                           child: Container(
-                            padding: const EdgeInsets.all(20),
+                            width: 180,
+                            height: 180,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -114,28 +115,41 @@ class _RealWorldSorterScreenState extends State<RealWorldSorterScreen> {
                                 ),
                               ],
                             ),
-                            child: Text(
-                              currentItem['emoji'],
-                              style: const TextStyle(fontSize: 100),
+                            child: Center(
+                              child: Text(
+                                currentItem['emoji'],
+                                style: const TextStyle(fontSize: 120),
+                              ),
                             ),
                           ),
                         ),
                 ),
               ),
-
               if (currentItem != null)
-                Text(
-                  currentItem['name'],
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [Shadow(color: Colors.black45, blurRadius: 5)],
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    currentItem['name'],
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                    ),
                   ),
                 ),
-
               const SizedBox(height: 40),
-
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 decoration: BoxDecoration(
