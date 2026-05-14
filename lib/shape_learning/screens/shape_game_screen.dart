@@ -65,7 +65,8 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
   void _confirmExit() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
+        // <-- CHANGED THIS LINE
         title: const Text(
           'පිටවෙන්නද? (Exit?)',
           style: TextStyle(
@@ -79,7 +80,8 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () =>
+                Navigator.pop(dialogContext), // 1. Close ONLY the dialog
             child: const Text(
               'නැත (No)',
               style: TextStyle(fontSize: 18, color: Colors.grey),
@@ -87,7 +89,10 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            onPressed: () => SystemNavigator.pop(),
+            onPressed: () {
+              Navigator.pop(dialogContext); // 1. Close Dialog
+              Navigator.pop(context); // 2. Close Game Screen (Reveals Map!)
+            },
             child: const Text(
               'ඔව් (Yes)',
               style: TextStyle(fontSize: 18, color: Colors.white),

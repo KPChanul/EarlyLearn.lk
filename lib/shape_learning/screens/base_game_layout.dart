@@ -166,18 +166,24 @@ class BaseGameLayout extends StatelessWidget {
                 child: controller.isPaused
                     ? _buildMenuScreen(
                         title: 'විවේකයක් ⏸️',
-                        color: Colors.blue,
-                        icon: Icons.pause_circle_filled,
+                        config: _MenuConfig.pause(),
+                        subtitle: null,
                         buttons: [
                           _buildMenuButton(
-                            'නැවත අරඹන්න (Resume)',
-                            Colors.green,
-                            controller.togglePause,
+                            label: 'නැවත අරඹන්න',
+                            sublabel: 'Resume',
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF43E97B), Color(0xFF38F9D7)],
+                            ),
+                            onPressed: controller.togglePause,
                           ),
                           _buildMenuButton(
-                            'මුල සිට පටන් ගන්න (Restart)',
-                            Colors.orange,
-                            () {
+                            label: 'මුල සිට',
+                            sublabel: 'Restart',
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF922B), Color(0xFFFFD93D)],
+                            ),
+                            onPressed: () {
                               controller.togglePause();
                               onRetry();
                             },
@@ -186,35 +192,42 @@ class BaseGameLayout extends StatelessWidget {
                       )
                     : controller.isGameWon
                     ? _buildMenuScreen(
-                        title: 'නියමයි! මට්ටම සමත්! 🎉',
-                        color: Colors.green,
-                        icon: Icons.star,
+                        title: '',
+                        config: _MenuConfig.win(),
                         subtitle:
-                            'මුළු ලකුණු: ${controller.score}\nගතවූ කාලය: ${controller.timeElapsedInSeconds}s',
+                            'ලකුණු: ${controller.score}  •  ⏱ ${controller.timeElapsedInSeconds}s',
                         buttons: [
                           _buildMenuButton(
-                            'ඊළඟ මට්ටම',
-                            Colors.blue,
-                            onNextLevel,
+                            label: 'ඊළඟ මට්ටම',
+                            sublabel: 'Next Level →',
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF4D96FF), Color(0xFF845EF7)],
+                            ),
+                            onPressed: onNextLevel,
                           ),
                           _buildMenuButton(
-                            'නැවත ක්‍රීඩා කරන්න',
-                            Colors.orange,
-                            onRetry,
+                            label: 'නැවත ක්‍රීඩාකරන්න',
+                            sublabel: 'Play Again',
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF922B), Color(0xFFFFD93D)],
+                            ),
+                            onPressed: onRetry,
                           ),
                         ],
                       )
                     : controller.isGameOver
                     ? _buildMenuScreen(
-                        title: 'අයියෝ! අසමත්! 😢',
-                        color: Colors.red,
-                        icon: Icons.sentiment_very_dissatisfied,
-                        subtitle: 'ඔබගේ ජීවිත අවසන්.',
+                        title: 'Oops!',
+                        config: _MenuConfig.lose(),
+                        subtitle: 'ඔබගේ අවස්ථාවන් අවසානයි!',
                         buttons: [
                           _buildMenuButton(
-                            'නැවත උත්සාහ කරන්න',
-                            Colors.orange,
-                            onRetry,
+                            label: 'නැවත උත්සාහ කරන්න',
+                            sublabel: 'Try Again',
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF6B6B), Color(0xFFFF922B)],
+                            ),
+                            onPressed: onRetry,
                           ),
                         ],
                       )
@@ -249,92 +262,245 @@ class BaseGameLayout extends StatelessWidget {
     );
   }
 
-  // Helper widget to draw the menus
+  // ── Beautiful menu overlay ────────────────────────────────────────────────
   Widget _buildMenuScreen({
     required String title,
-    required Color color,
-    required IconData icon,
+    required _MenuConfig config,
     String? subtitle,
     required List<Widget> buttons,
   }) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 30),
-        padding: const EdgeInsets.all(30),
+        margin: const EdgeInsets.symmetric(horizontal: 24),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
           borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: color, width: 6),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 20,
-              spreadRadius: 5,
+              color: config.glowColor.withOpacity(0.35),
+              blurRadius: 36,
+              spreadRadius: 8,
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 80, color: color),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: color,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(40),
+          child: Stack(
+            children: [
+              // Gradient background
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: config.bgGradient,
+                  ),
+                ),
               ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 15),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+
+              // Decorative top-right circle
+              Positioned(
+                top: -30,
+                right: -30,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.08),
+                  ),
+                ),
+              ),
+
+              // Decorative bottom-left circle
+              Positioned(
+                bottom: -20,
+                left: -20,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.06),
+                  ),
+                ),
+              ),
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Icon in glowing circle
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.4),
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(config.icon, size: 60, color: Colors.white),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Title
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        height: 1.2,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Subtitle / stats
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.18),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          subtitle,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // Buttons
+                    ...buttons.map(
+                      (btn) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: btn,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-            const SizedBox(height: 30),
-            ...buttons.map(
-              (btn) => Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: btn,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  // Helper widget for the big buttons
-  Widget _buildMenuButton(String text, Color color, VoidCallback onPressed) {
+  // ── Gradient button ───────────────────────────────────────────────────────
+  Widget _buildMenuButton({
+    required String label,
+    required String sublabel,
+    required LinearGradient gradient,
+    required VoidCallback onPressed,
+  }) {
     return SizedBox(
       width: double.infinity,
-      height: 60,
+      height: 64,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(32),
           ),
-          elevation: 5,
         ),
         onPressed: onPressed,
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: [
+              BoxShadow(
+                color: gradient.colors.first.withOpacity(0.4),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    height: 1.1,
+                  ),
+                ),
+                Text(
+                  sublabel,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withOpacity(0.85),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+// ── Menu config helper ────────────────────────────────────────────────────────
+
+class _MenuConfig {
+  final List<Color> bgGradient;
+  final Color glowColor;
+  final IconData icon;
+
+  const _MenuConfig({
+    required this.bgGradient,
+    required this.glowColor,
+    required this.icon,
+  });
+
+  factory _MenuConfig.win() => const _MenuConfig(
+    bgGradient: [Color(0xFF2DC653), Color(0xFF1A9E4A)],
+    glowColor: Color(0xFF2DC653),
+    icon: Icons.emoji_events_rounded,
+  );
+
+  factory _MenuConfig.lose() => const _MenuConfig(
+    bgGradient: [Color(0xFFE8384F), Color(0xFFBD1E30)],
+    glowColor: Color(0xFFE8384F),
+    icon: Icons.sentiment_very_dissatisfied_rounded,
+  );
+
+  factory _MenuConfig.pause() => const _MenuConfig(
+    bgGradient: [Color(0xFF4D96FF), Color(0xFF2563D8)],
+    glowColor: Color(0xFF4D96FF),
+    icon: Icons.pause_circle_filled_rounded,
+  );
 }
