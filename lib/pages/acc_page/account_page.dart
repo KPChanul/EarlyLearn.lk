@@ -41,7 +41,7 @@ class _AccountPageState extends State<AccountPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.purple.shade200, Colors.blue.shade300],
+            colors: [const Color.fromARGB(255, 193, 233, 108),const Color.fromARGB(255, 184, 235, 102), const Color.fromARGB(255, 62, 178, 83)],
           ),
         ),
         child: SafeArea(
@@ -55,18 +55,12 @@ class _AccountPageState extends State<AccountPage> {
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.blue.shade600, Colors.purple.shade600],
+                          colors: [ const Color.fromARGB(130, 215, 255, 156),const Color.fromARGB(130, 236, 255, 149),const Color.fromARGB(130, 253, 255, 146)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
+                        
                       ),
                       child: GestureDetector(
                         onTap: () {
@@ -95,7 +89,7 @@ class _AccountPageState extends State<AccountPage> {
                                   ? _account!.currentChild
                                   : 'No child selected',
                               style: const TextStyle(
-                                color: Colors.white70,
+                                color: Color.fromARGB(255, 11, 132, 0),
                                 fontSize: 14,
                               ),
                             ),
@@ -103,7 +97,7 @@ class _AccountPageState extends State<AccountPage> {
                             const Text(
                               'Tap to manage child account',
                               style: TextStyle(
-                                color: Colors.white54,
+                                color: Color.fromARGB(255, 0, 122, 45),
                                 fontSize: 12,
                               ),
                             ),
@@ -131,7 +125,7 @@ class _AccountPageState extends State<AccountPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
-                            color: Colors.orange,
+                            color: const Color.fromARGB(255, 0, 153, 61),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Row(
@@ -171,7 +165,7 @@ class _AccountPageState extends State<AccountPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: const Color.fromARGB(255, 0, 96, 31),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: const Row(

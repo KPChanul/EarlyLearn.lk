@@ -7,15 +7,19 @@ import '../widgets/child_avatar.dart';
 
 class ManageChildPage extends StatefulWidget {
   final Account account;
+  // Controls whether this page is required during account setup
+  // true = user cannot leave until completed
+  // false = normal page with back navigation
   final bool isRequired;
 
-  ManageChildPage({
+  const ManageChildPage({
+    super.key,
     required this.account,
     this.isRequired = false,
   });
 
   @override
-  _ManageChildPageState createState() => _ManageChildPageState();
+  State<ManageChildPage> createState() => _ManageChildPageState();
 }
 
 class _ManageChildPageState extends State<ManageChildPage> {
@@ -27,176 +31,164 @@ class _ManageChildPageState extends State<ManageChildPage> {
     childBox = Hive.box<Child>('children');
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
+
+@override
+Widget build(BuildContext context) {
+  final Color green = const Color.fromARGB(255, 0, 93, 28);
+
+  return Theme(
+    // removes default purple system theme (cursor + selection + focus glow)
+    data: Theme.of(context).copyWith(
+      colorScheme: Theme.of(context).colorScheme.copyWith(
+        primary: green,
+        secondary: green,
+      ),
+
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: green,
+        selectionColor: green.withOpacity(0.25),
+        selectionHandleColor: green,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        floatingLabelStyle: TextStyle(
+          color: green,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+
+    child:PopScope(
       canPop: !widget.isRequired,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Manage Children'),
+          title: const Text('Manage Children'),
           centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 36, 118, 0),
+          foregroundColor: Colors.white,
           automaticallyImplyLeading: !widget.isRequired,
         ),
+
+        //  background 
         body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).primaryColor.withOpacity(0.1),
-                Colors.blue[50] ?? Colors.blue,
-              ],
-            ),
-          ),
+          color: const Color.fromARGB(255, 187, 205, 187),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // Add Child Button
-                Container(
+                // Add new child button 
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () => _showAddChildDialog(),
-                    icon: Icon(Icons.add_circle),
-                    label: Text(
-                      'Add New Child',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    onPressed: _showAddChildDialog,
+                    icon: const Icon(Icons.add_circle),
+                    label: const Text('Add New Child'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: const Color.fromARGB(255, 36, 118, 0),
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
-                // Children List
+
+                const SizedBox(height: 16),
+
+                // Children list updates automatically using Hive listener
                 Expanded(
                   child: ValueListenableBuilder(
                     valueListenable: childBox.listenable(),
-                    builder: (context, Box<Child> childBoxValue, _) {
-                      if (childBoxValue.isEmpty) {
+                    builder: (context, Box<Child> box, _) {
+                      if (box.isEmpty) {
                         return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              
-                              SizedBox(height: 16),
-                              Text(
-                                'No children added yet',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
+                          child: Text(
+                            'No children added yet',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 0, 78, 6),
+                              fontSize: 16,
+                            ),
                           ),
                         );
                       }
 
                       return ListView.builder(
-                        itemCount: childBoxValue.length,
+                        itemCount: box.length,
                         itemBuilder: (context, index) {
-                          final child = childBoxValue.getAt(index);
-                          final childName = child?.name ?? 'Unknown';
+                          final child = box.getAt(index);
+                          final name = child?.name ?? 'Unknown';
                           final isSelected =
-                              widget.account.currentChild == childName;
+                              widget.account.currentChild == name;
 
                           return Card(
-                            elevation: 4,
-                            margin: EdgeInsets.symmetric(vertical: 8),
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            color: isSelected
+                                ? const Color(0xFFE8F5E9)
+                                : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                               side: BorderSide(
                                 color: isSelected
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.transparent,
-                                width: 2,
+                                    ? Colors.green
+                                    : Colors.grey.shade300,
+                                width: isSelected ? 2 : 1,
                               ),
                             ),
-                            child: GestureDetector(
-                              onTap: () => _selectChildWithPassword(childName),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: isSelected
-                                        ? [
-                                            Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.2),
-                                            Colors.blue[100] ?? Colors.blue,
-                                          ]
-                                        : [
-                                            Colors.white,
-                                            Colors.grey[50] ?? Colors.grey,
-                                          ],
-                                  ),
+                            child: ListTile(
+                              onTap: () =>
+                                  _selectChildWithPassword(name),
+
+                              leading: ChildAvatar(name, size: 60),
+
+                              title: Text(
+                                name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Row(
-                                    children: [
-                                      ChildAvatar(childName, size: 70),
-                                      SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              childName,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              'Age: ${child?.getAge()} years',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey[700],
-                                              ),
-                                            ),
-                                            if (isSelected)
-                                              Padding(
-                                                padding: EdgeInsets.only(top: 4),
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 4,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius: BorderRadius.circular(4),
-                                                    ),
-                                                  child: Text(
-                                                    'Current Child',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
+                              ),
+
+                              subtitle: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('Age: ${child?.getAge()} years'),
+
+                                  // Highlight current child
+                                  if (isSelected)
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(255, 36, 118, 0),
+                                        borderRadius:
+                                            BorderRadius.circular(4),
+                                      ),
+                                      child: const Text(
+                                        'Current Child',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete,
-                                            color: Colors.red),
-                                        onPressed: () =>
-                                            _deleteChildWithPassword(index, childName),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                ],
+                              ),
+
+                              trailing: IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Color(0xFFFF6347), 
+                                ),
+                                onPressed: () =>
+                                    _deleteChildWithPassword(
+                                  index,
+                                  name,
                                 ),
                               ),
                             ),
@@ -211,26 +203,23 @@ class _ManageChildPageState extends State<ManageChildPage> {
           ),
         ),
       ),
-    );
+    ),);
   }
 
+  // Select a child after password verification
   void _selectChild(String childName) {
     widget.account.setCurrentChild(childName);
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$childName is now the current child'),
-        duration: Duration(seconds: 1),
-      ),
+      SnackBar(content: Text('$childName is now the current child')),
     );
 
-    // Always navigate to home page regardless of required mode
-    Future.delayed(Duration(milliseconds: 500), () {
+    // Navigate back to main app after selection
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => MainApp(),
-          ),
+          MaterialPageRoute(builder: (_) => MainApp()),
         );
       }
     });
@@ -239,249 +228,285 @@ class _ManageChildPageState extends State<ManageChildPage> {
   void _selectChildWithPassword(String childName) {
     _showPasswordDialog(
       title: 'Change Child',
-      onConfirm: () {
-        _selectChild(childName);
-      },
+      onConfirm: () => _selectChild(childName),
     );
   }
 
-  void _deleteChildWithPassword(int index, String childName) {
+  void _deleteChildWithPassword(int index, String name) {
     _showPasswordDialog(
       title: 'Delete Child',
-      onConfirm: () {
-        _deleteChild(index, childName);
-      },
+      onConfirm: () => _deleteChild(index, name),
     );
   }
 
+  // Common password validation dialog
   void _showPasswordDialog({
     required String title,
     required VoidCallback onConfirm,
   }) {
-    final passwordController = TextEditingController();
+    final controller = TextEditingController();
 
     showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.lock, color: Colors.orange),
-            SizedBox(width: 8),
-            Text(title),
-          ],
+    context: context,
+    builder: (dialogContext) => Theme(
+      data: Theme.of(context).copyWith(
+
+        // removes purple default colors
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+          primary: const Color.fromARGB(255, 0, 93, 28),
+          secondary: const Color.fromARGB(255, 0, 93, 28),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Enter your account password to proceed'),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+
+        
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color.fromARGB(255, 0, 93, 28),
+          selectionHandleColor: Color.fromARGB(255, 0, 93, 28),
+          selectionColor: Color.fromARGB(255, 0, 93, 28),
+        ),
+      ),
+
+    
+    child:AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'Password',
+            enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 0, 149, 5),
+                      width: 1.5,
+                    ),
+                  ),
+
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 0, 130, 4),
+                width: 2,
               ),
             ),
-          ],
+          ),
         ),
         actions: [
+          // Close dialog safely
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
+
           ElevatedButton(
             onPressed: () {
-              if (widget.account.verifyPassword(passwordController.text)) {
-                Navigator.pop(context); // Close password dialog
+              if (widget.account.verifyPassword(controller.text)) {
+                Navigator.of(dialogContext).pop();
                 onConfirm();
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Incorrect password!'),
-                    backgroundColor: Colors.red,
+                  const SnackBar(
+                    content: Text('Incorrect password!',
+               style: TextStyle(color: Color.fromARGB(255, 255, 94, 44))),
                   ),
                 );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: Text('Confirm', style: TextStyle(color: Colors.white)),
+            child: const Text('Confirm',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
         ],
       ),
-    );
+    ),);
   }
 
-  void _deleteChild(int index, String childName) {
+  // Delete child from Hive storage
+  void _deleteChild(int index, String name) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.warning_amber, color: Colors.orange),
-            SizedBox(width: 8),
-            Text('Delete Child'),
-          ],
-        ),
-        content: Text('Are you sure you want to delete $childName?'),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Child'),
+        content: Text('Delete $name?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
           ElevatedButton(
             onPressed: () {
               childBox.deleteAt(index);
 
-              // If deleted child was current, set current to null
-              if (widget.account.currentChild == childName) {
+              if (widget.account.currentChild == name) {
                 widget.account.setCurrentChild('');
               }
 
-              Navigator.pop(context);
+              Navigator.of(dialogContext).pop();
+
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$childName deleted'),
-                  duration: Duration(seconds: 1),
-                ),
+                SnackBar(content: Text('$name deleted')),
               );
+
               setState(() {});
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Delete', style: TextStyle(color: Colors.white)),
+            child: const Text('Delete',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
         ],
       ),
     );
   }
 
+  // verify password before adding new child
   void _showAddChildDialog() {
-    final passwordController = TextEditingController();
+    final controller = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.lock, color: Colors.orange),
-            SizedBox(width: 8),
-            Text('Verify Password'),
-          ],
+      builder: (dialogContext) => Theme(
+      data: Theme.of(context).copyWith(
+
+        // removes purple default colors
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+          primary: const Color.fromARGB(255, 0, 93, 28),
+          secondary: const Color.fromARGB(255, 0, 93, 28),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Enter your account password to add a new child'),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+
+        
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color.fromARGB(255, 0, 93, 28),
+          selectionHandleColor: Color.fromARGB(255, 0, 93, 28),
+          selectionColor: Color.fromARGB(255, 0, 93, 28),
+        ),
+      ),
+
+    
+    child:AlertDialog(
+        title: const Text('Verify Password'),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 0, 149, 5),
+                      width: 1.5,
+                    ),
+                  ),
+
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Color.fromARGB(255, 0, 130, 4),
+                width: 2,
               ),
-            ),
-          ],
-        ),
+          ),
+        ),),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
           ElevatedButton(
             onPressed: () {
-              if (widget.account.verifyPassword(passwordController.text)) {
-                Navigator.pop(context); // Close password dialog
-                _showChildFormDialog(); // Show form to enter child details
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Incorrect password!'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+              if (widget.account.verifyPassword(controller.text)) {
+                Navigator.of(dialogContext).pop();
+                _showChildFormDialog();
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            child: Text('Verify', style: TextStyle(color: Colors.white)),
+            child: const Text('Verify',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
         ],
       ),
-    );
+    ),);
   }
 
+  // Form to add a new child
   void _showChildFormDialog() {
     final nameController = TextEditingController();
     DateTime? selectedDate;
 
     showDialog(
       context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.person_add, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('Child Details'),
-            ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Theme(
+        data: Theme.of(context).copyWith(
+
+          // removes purple default colors
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: const Color.fromARGB(255, 0, 93, 28),
+            secondary: const Color.fromARGB(255, 0, 93, 28),
           ),
+
+          
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Color.fromARGB(255, 0, 93, 28),
+            selectionHandleColor: Color.fromARGB(255, 0, 93, 28),
+            selectionColor: Color.fromARGB(255, 0, 93, 28),
+          ),
+        ),
+
+      
+      child:AlertDialog(
+          title: const Text('Child Details'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Child Name',
-                  prefixIcon: Icon(Icons.person),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  labelStyle: TextStyle(color: Color.fromARGB(255, 0, 93, 28),),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 0, 149, 5),
+                      width: 1.5,
+                    ),
+                  ),
+
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 0, 130, 4),
+                      width: 2,
+                    ),
                   ),
                 ),
+                
               ),
-              SizedBox(height: 16),
-              InkWell(
-                onTap: () async {
+              const SizedBox(height: 12),
+
+              // Date of birth picker
+              TextButton(
+                onPressed: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now()
-                        .subtract(Duration(days: 365 * 3)), // Default 3 years old
-                    firstDate: DateTime(2015),
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),  // earliest date user allowed to pick
                     lastDate: DateTime.now(),
+                    // calendar theme
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: Colors.green, // header + selected date
+                            onPrimary: Colors.white,
+                            onSurface: Color.fromARGB(255, 0, 93, 28), // text color
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
                   );
                   if (picked != null) {
                     setState(() => selectedDate = picked);
                   }
                 },
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Colors.blue),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          selectedDate == null
-                              ? 'Select Date of Birth'
-                              : 'DOB: ${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: selectedDate == null
-                                ? Colors.grey[600]
-                                : Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
+                child: Text(
+                  selectedDate == null
+                      ? 'Select DOB'
+                      : 'DOB: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 0, 93, 28),
                   ),
                 ),
               ),
@@ -490,78 +515,31 @@ class _ManageChildPageState extends State<ManageChildPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
             ),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please enter child name')),
-                  );
-                  return;
-                }
-                if (selectedDate == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select date of birth')),
-                  );
-                  return;
-                }
+                if (nameController.text.isEmpty ||
+                    selectedDate == null) return;
 
-                // Check for duplicate names
-                final childName = nameController.text.trim();
-                for (int i = 0; i < childBox.length; i++) {
-                  final existingChild = childBox.getAt(i);
-                  if (existingChild?.name == childName) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('A child named "$childName" already exists!'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-                }
-
-                // Create the child
-                final newChild = Child.create(
-                  name: childName,
+                final child = Child.create(
+                  name: nameController.text.trim(),
                   dob: selectedDate!,
                 );
-                childBox.add(newChild);
 
-                // Set as current child
-                widget.account.setCurrentChild(newChild.name);
+                childBox.add(child);
+                widget.account.setCurrentChild(child.name);
 
-                Navigator.pop(context); // Close form dialog
-
-                // Use mounted check and widget context to ensure navigation works
-                if (!mounted) return;
-
-                ScaffoldMessenger.of(this.context).showSnackBar(
-                  SnackBar(
-                    content: Text('${newChild.name} added successfully'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-
-                // Navigate to home page using the page's own context
-                Future.delayed(Duration(milliseconds: 300), () {
-                  if (mounted) {
-                    Navigator.pushReplacement(
-                      this.context,
-                      MaterialPageRoute(
-                        builder: (_) => MainApp(),
-                      ),
-                    );
-                  }
-                });
+                Navigator.pop(context);
+                setState(() {});
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: Text('Add', style: TextStyle(color: Colors.white)),
+              child: const Text('Add',
+               style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
             ),
           ],
         ),
       ),
-    );
+    ),);
   }
 }
