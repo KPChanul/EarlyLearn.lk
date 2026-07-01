@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:early_learn/mainc.dart';
+import 'package:early_learn/main.dart';
 
 void main() {
   testWidgets('App loads successfully', (WidgetTester tester) async {
