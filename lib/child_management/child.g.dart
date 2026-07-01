@@ -13,29 +13,34 @@ class ChildAdapter extends TypeAdapter<Child> {
   @override
   Child read(BinaryReader reader) {
     final numOfFields = reader.readByte();
+
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+      for (int i = 0; i < numOfFields; i++)
+        reader.readByte(): reader.read(),
     };
+
     return Child(
       fields[0] as String,
       fields[1] as DateTime,
       (fields[2] as Map).cast<int, int>(),
-      (fields[3] as Map?)?.cast<String, int>() ?? {}, // Added the new field with a fallback
+      fields[3] != null
+          ? (fields[3] as Map).cast<String, int>()
+          : <String, int>{},
     );
   }
 
   @override
   void write(BinaryWriter writer, Child obj) {
     writer
-      ..writeByte(4) // Updated from 3 to 4 total fields
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj._name)
       ..writeByte(1)
       ..write(obj._dob)
       ..writeByte(2)
       ..write(obj._stages)
-      ..writeByte(3) // Added the new quizMarks field
-      ..write(obj.quizMarks); 
+      ..writeByte(3)
+      ..write(obj._scores);
   }
 
   @override
