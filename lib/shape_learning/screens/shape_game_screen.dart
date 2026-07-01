@@ -117,8 +117,9 @@ class _ShapeGameScreenState extends State<ShapeGameScreen> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, child) {
-        if (_controller.getCurrentQuestion().isEmpty)
+        if (_controller.getCurrentQuestion().isEmpty) {
           return const CircularProgressIndicator();
+        }
 
         var questionData = _controller.getCurrentQuestion();
         List<IconData> options = questionData['options'];
