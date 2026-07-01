@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../controllers/learning_controller.dart';
+import 'package:early_learn/shape_learning/screens/shape_game_screen.dart';
 
 class VideoLearningScreen extends StatefulWidget {
   const VideoLearningScreen({super.key});
@@ -28,7 +29,7 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
   void _confirmExit() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: const Text(
           'පිටවෙන්නද? (Exit?)',
           style: TextStyle(
@@ -42,7 +43,7 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text(
               'නැත (No)',
               style: TextStyle(fontSize: 18, color: Colors.grey),
@@ -50,7 +51,10 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            onPressed: () => SystemNavigator.pop(),
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              Navigator.pop(context);
+            },
             child: const Text(
               'ඔව් (Yes)',
               style: TextStyle(fontSize: 18, color: Colors.white),
@@ -98,15 +102,10 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
         return Colors.orange;
       case 'rectangle':
         return const Color.fromARGB(255, 211, 224, 21);
-
       default:
         return Colors.grey;
     }
   }
-
-  // ==========================================
-  // UI HELPER WIDGETS
-  // ==========================================
 
   Widget _buildHeader() {
     return Container(
@@ -129,7 +128,6 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
     );
   }
 
-  // The video is now completely independent and will not refresh!
   Widget _buildVideoPlayer() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -152,20 +150,16 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
     );
   }
 
-  // ONLY this widget rebuilds when a question triggers!
   Widget _buildQuestionArea(bool isLandscape) {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, child) {
-        // --- NEW: Beautiful Placeholder when NO question is active ---
         if (_controller.activeQuestion == null) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: const EdgeInsets.all(25),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(
-                0.7,
-              ), // Soft, semi-transparent white
+              color: Colors.white.withOpacity(0.7),
               borderRadius: BorderRadius.circular(30),
               border: Border.all(color: Colors.purple.shade200, width: 3),
             ),
@@ -227,7 +221,6 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
           );
         }
 
-        // --- If there IS a question, draw the actual quiz UI! ---
         return Container(
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(20),
@@ -365,8 +358,11 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
               ),
             ),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Going to next stage...')),
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ShapeGameScreen(),
+                ),
               );
             },
             child: const Row(
@@ -393,10 +389,6 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
     );
   }
 
-  // ==========================================
-  // MAIN BUILD METHOD
-  // ==========================================
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -414,10 +406,8 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          _buildVideoPlayer(), // Video is placed statically
-                          _buildQuestionArea(
-                            false,
-                          ), // Question area manages its own state
+                          _buildVideoPlayer(),
+                          _buildQuestionArea(false),
                         ],
                       ),
                     ),
@@ -431,10 +421,7 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
                   Expanded(
                     flex: 3,
                     child: Center(
-                      child: SingleChildScrollView(
-                        child:
-                            _buildVideoPlayer(), // Video is placed statically
-                      ),
+                      child: SingleChildScrollView(child: _buildVideoPlayer()),
                     ),
                   ),
                   Expanded(
@@ -444,9 +431,7 @@ class _VideoLearningScreenState extends State<VideoLearningScreen> {
                         _buildHeader(),
                         Expanded(
                           child: SingleChildScrollView(
-                            child: _buildQuestionArea(
-                              true,
-                            ), // Question area manages its own state
+                            child: _buildQuestionArea(true),
                           ),
                         ),
                         _buildBottomNavigation(),
