@@ -24,6 +24,10 @@ class MathGameEngine extends ChangeNotifier {
   bool isGameOver = false;
   late MathQuestion currentQuestion;
 
+  // New feedback state
+  int? selectedIndex;
+  bool isFeedbackVisible = false;
+
   MathGameEngine() {
     generateNextQuestion();
   }
@@ -70,14 +74,23 @@ class MathGameEngine extends ChangeNotifier {
   }
 
   void checkAnswer(int index) {
-    if (isGameOver) return;
+    if (isGameOver || isFeedbackVisible) return;
+
+    selectedIndex = index;
+    isFeedbackVisible = true;
+
     if (index == currentQuestion.correctIndex) {
       score += (currentStage == 1 ? 30 : 50);
       _soundService.playCorrect();
     } else {
       _soundService.playWrong();
     }
+    notifyListeners();
+  }
 
+  void nextQuestion() {
+    isFeedbackVisible = false;
+    selectedIndex = null;
     questionsAnswered++;
     if (questionsAnswered >= 20) {
       isGameOver = true;

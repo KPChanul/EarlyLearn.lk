@@ -6,27 +6,71 @@ class ThirdLession extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Math Lesson 3")),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: const [
-          _LessonVideoPlayer(
-            videoId: '50Yn7L_RNAE', // Extracted from your addition link
-            title: "Part 1: Addition",
-          ),
-          Divider(height: 50, color: Colors.grey),
-          _LessonVideoPlayer(
-            videoId: 'Xl8kJSOnyDo', // Extracted from your subtraction link
-            title: "Part 2: Subtraction",
-          ),
-        ],
+    return Container(
+      // The background image remains layered behind everything
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bg1.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          // We keep the back button so navigation still works
+        ),
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          children: [
+            // The "Bubble" Title
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 40,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  "Early Learn",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            ),
+
+            // Video Cards with simplified titles as requested
+            const _LessonVideoPlayer(
+              videoId: '50Yn7L_RNAE',
+              title: "Addition", // Just the first part
+            ),
+            const SizedBox(height: 20),
+            const _LessonVideoPlayer(
+              videoId: 'Xl8kJSOnyDo',
+              title: "Subtraction", // Just the first part
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// A simple local widget to handle the player lifecycle
 class _LessonVideoPlayer extends StatefulWidget {
   final String videoId;
   final String title;
@@ -57,15 +101,31 @@ class _LessonVideoPlayerState extends State<_LessonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          widget.title,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: Colors.white.withOpacity(0.9),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: YoutubePlayer(controller: _controller),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
-        YoutubePlayer(controller: _controller),
-      ],
+      ),
     );
   }
 }
