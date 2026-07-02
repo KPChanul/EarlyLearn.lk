@@ -163,8 +163,8 @@ class _RealWorldSorterScreenState extends State<RealWorldSorterScreen> {
 
   Widget _buildBucket(IconData targetShape, Color color) {
     return DragTarget<String>(
-      onWillAccept: (data) => true,
-      onAccept: (data) => _controller.processDrop(targetShape),
+      onWillAcceptWithDetails: (data) => true,
+      onAcceptWithDetails: (data) => _controller.processDrop(targetShape),
       builder: (context, candidateData, rejectedData) {
         bool isHovered = candidateData.isNotEmpty;
         return GestureDetector(

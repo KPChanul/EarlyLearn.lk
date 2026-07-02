@@ -9,7 +9,8 @@ class ManageChildPage extends StatefulWidget {
   final Account account;
   final bool isRequired;
 
-  ManageChildPage({
+  const ManageChildPage({
+    super.key,
     required this.account,
     this.isRequired = false,
   });
@@ -53,14 +54,17 @@ class _ManageChildPageState extends State<ManageChildPage> {
             child: Column(
               children: [
                 // Add Child Button
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () => _showAddChildDialog(),
                     icon: Icon(Icons.add_circle),
                     label: Text(
                       'Add New Child',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -83,7 +87,6 @@ class _ManageChildPageState extends State<ManageChildPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              
                               SizedBox(height: 16),
                               Text(
                                 'No children added yet',
@@ -127,9 +130,9 @@ class _ManageChildPageState extends State<ManageChildPage> {
                                     end: Alignment.bottomRight,
                                     colors: isSelected
                                         ? [
-                                            Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.2),
+                                            Theme.of(
+                                              context,
+                                            ).primaryColor.withOpacity(0.2),
                                             Colors.blue[100] ?? Colors.blue,
                                           ]
                                         : [
@@ -166,22 +169,28 @@ class _ManageChildPageState extends State<ManageChildPage> {
                                             ),
                                             if (isSelected)
                                               Padding(
-                                                padding: EdgeInsets.only(top: 4),
+                                                padding: EdgeInsets.only(
+                                                  top: 4,
+                                                ),
                                                 child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal: 8,
                                                     vertical: 4,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius: BorderRadius.circular(4),
-                                                    ),
+                                                    color: Colors.green,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
                                                   child: Text(
                                                     'Current Child',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -190,10 +199,15 @@ class _ManageChildPageState extends State<ManageChildPage> {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: Icon(Icons.delete,
-                                            color: Colors.red),
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
                                         onPressed: () =>
-                                            _deleteChildWithPassword(index, childName),
+                                            _deleteChildWithPassword(
+                                              index,
+                                              childName,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -228,9 +242,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => MainApp(),
-          ),
+          MaterialPageRoute(builder: (_) => MainApp()),
         );
       }
     });
@@ -449,8 +461,9 @@ class _ManageChildPageState extends State<ManageChildPage> {
                 onTap: () async {
                   final picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now()
-                        .subtract(Duration(days: 365 * 3)), // Default 3 years old
+                    initialDate: DateTime.now().subtract(
+                      Duration(days: 365 * 3),
+                    ), // Default 3 years old
                     firstDate: DateTime(2015),
                     lastDate: DateTime.now(),
                   );
@@ -514,7 +527,9 @@ class _ManageChildPageState extends State<ManageChildPage> {
                   if (existingChild?.name == childName) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('A child named "$childName" already exists!'),
+                        content: Text(
+                          'A child named "$childName" already exists!',
+                        ),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -549,9 +564,7 @@ class _ManageChildPageState extends State<ManageChildPage> {
                   if (mounted) {
                     Navigator.pushReplacement(
                       this.context,
-                      MaterialPageRoute(
-                        builder: (_) => MainApp(),
-                      ),
+                      MaterialPageRoute(builder: (_) => MainApp()),
                     );
                   }
                 });

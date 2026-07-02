@@ -9,7 +9,7 @@ import '../widgets/child_avatar.dart';
 
 class HomePage extends StatefulWidget {
   final Account account;
-  HomePage({required this.account});
+  const HomePage({super.key, required this.account});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -47,10 +47,8 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => ManageChildPage(
-              account: widget.account,
-              isRequired: true,
-            ),
+            builder: (_) =>
+                ManageChildPage(account: widget.account, isRequired: true),
           ),
         );
       });
@@ -136,10 +134,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Stack(
                                     alignment: Alignment.bottomRight,
                                     children: [
-                                      ChildAvatar(
-                                        currentChild.name,
-                                        size: 120,
-                                      ),
+                                      ChildAvatar(currentChild.name, size: 120),
                                       Container(
                                         decoration: BoxDecoration(
                                           color: Colors.green,
@@ -189,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(height: 40),
                   // Action Buttons
-                  Container(
+                  SizedBox(
                     width: 140,
                     child: _buildActionButton(
                       context,
@@ -200,9 +195,8 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => AccountSettingsPage(
-                              account: widget.account,
-                            ),
+                            builder: (_) =>
+                                AccountSettingsPage(account: widget.account),
                           ),
                         );
                       },
@@ -210,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(height: 40),
                   // Logout Button
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {

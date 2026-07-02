@@ -29,6 +29,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,20 +58,13 @@ class MyApp extends StatelessWidget {
 
       // Account logged in but no current child - show manage child page
       if (account.currentChild.isEmpty) {
-        return ManageChildPage(
-          account: account,
-          isRequired: true,
-        );
+        return ManageChildPage(account: account, isRequired: true);
       }
 
       // Account logged in and has current child - show home page
       return HomePage(account: account);
     } catch (e) {
-      return Scaffold(
-        body: Center(
-          child: Text('Error initializing app: $e'),
-        ),
-      );
+      return Scaffold(body: Center(child: Text('Error initializing app: $e')));
     }
   }
 }

@@ -3,7 +3,7 @@ import 'account.dart';
 
 class AccountSettingsPage extends StatefulWidget {
   final Account account;
-  AccountSettingsPage({required this.account});
+  const AccountSettingsPage({super.key, required this.account});
 
   @override
   _AccountSettingsPageState createState() => _AccountSettingsPageState();
@@ -27,10 +27,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Account Settings'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('Account Settings'), centerTitle: true),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Center(

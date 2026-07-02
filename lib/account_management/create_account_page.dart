@@ -4,7 +4,7 @@ import '../child_management/manage_child_page.dart';
 
 class CreateAccountPage extends StatefulWidget {
   final Account? account;
-  CreateAccountPage({this.account});
+  const CreateAccountPage({super.key, this.account});
 
   @override
   _CreateAccountPageState createState() => _CreateAccountPageState();
@@ -22,10 +22,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Account'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('Create Account'), centerTitle: true),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Center(
@@ -42,7 +39,10 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   children: [
                     Text(
                       'Create Your Account',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 24),
                     TextField(
@@ -69,8 +69,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         labelText: 'Password',
                         prefixIcon: Icon(Icons.lock),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                     ),
@@ -82,14 +88,23 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         labelText: 'Confirm Password',
                         prefixIcon: Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                          icon: Icon(
+                            _obscureConfirm
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(height: 16),
                     if (_error.isNotEmpty)
-                      Text(_error, style: TextStyle(color: Colors.red, fontSize: 16)),
+                      Text(
+                        _error,
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      ),
                     SizedBox(height: 24),
                     ElevatedButton.icon(
                       onPressed: () async {
@@ -108,7 +123,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         }
 
                         // Create account
-                        final newAccount = await Account.createAccount(name: name, email: email, password: password);
+                        final newAccount = await Account.createAccount(
+                          name: name,
+                          email: email,
+                          password: password,
+                        );
 
                         // Navigate to ManageChildPage to create first child
                         Navigator.pushReplacement(

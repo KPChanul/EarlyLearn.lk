@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'account.dart';
 import '../main_app.dart';
 import '../child_management/manage_child_page.dart';
+
 class LoginPage extends StatefulWidget {
   final Account account;
-  LoginPage({required this.account});
+  const LoginPage({super.key, required this.account});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _error = '';
@@ -20,10 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('Login'), centerTitle: true),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Center(
@@ -38,7 +35,6 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     Text(
                       'Login to your account',
                       style: TextStyle(
@@ -66,8 +62,14 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: 'Password',
                         prefixIcon: Icon(Icons.lock),
                         suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                       obscureText: _obscurePassword,
@@ -78,9 +80,11 @@ class _LoginPageState extends State<LoginPage> {
                     ElevatedButton.icon(
                       onPressed: () {
                         if (_nameController.text == widget.account.name &&
-                            widget.account.verifyPassword(_passwordController.text)) {
+                            widget.account.verifyPassword(
+                              _passwordController.text,
+                            )) {
                           widget.account.logIn();
-                          
+
                           // Check if current child exists
                           if (widget.account.currentChild.isEmpty) {
                             // Navigate to manage child page
@@ -117,12 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                     if (_error.isNotEmpty)
                       Text(
                         _error,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.red, fontSize: 16),
                       ),
-
                   ],
                 ),
               ),
