@@ -5,12 +5,7 @@ class ChildAvatar extends StatelessWidget {
   final double size;
   final List<Color>? colors;
 
-  const ChildAvatar(
-    this.name, {
-    Key? key,
-    this.size = 40,
-    this.colors,
-  }) : super(key: key);
+  const ChildAvatar(this.name, {super.key, this.size = 40, this.colors});
 
   String getInitials() {
     if (name.isEmpty) return 'NC';
