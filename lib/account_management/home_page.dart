@@ -323,3 +323,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+class AccountSettingsPage extends StatelessWidget {
+  final Account account;
+
+  const AccountSettingsPage({super.key, required this.account});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Account Settings'),
+      ),
+      body: Center(
+        child: Text(
+          'Manage settings for ${account.name}',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
+}

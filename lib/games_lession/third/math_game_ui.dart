@@ -121,9 +121,9 @@ class MathGameUI extends StatelessWidget {
 
     Color? backgroundColor;
     if (engine.isFeedbackVisible) {
-      if (isCorrect)
+      if (isCorrect) {
         backgroundColor = Colors.green.shade100;
-      else if (isSelected)
+      } else if (isSelected)
         backgroundColor = Colors.red.shade100;
     }
 
