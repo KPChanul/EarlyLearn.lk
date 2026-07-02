@@ -470,7 +470,7 @@ class _AlphabetGameScreenState extends State<AlphabetGameScreen>
                 child: Image.asset(
                   currentQ.imagePath,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Center(
+                  errorBuilder: (_, _, _) => const Center(
                     child: Icon(Icons.image_not_supported,
                         size: 80, color: Colors.grey),
                   ),

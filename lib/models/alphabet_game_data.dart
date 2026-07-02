@@ -20,4 +20,11 @@ final List<AlphabetQuestion> alphabetQuestionsData = [
     options: ['ඉ', 'උ', 'එ'],
     correctAnswer: 'එ', 
   ),
+
+  AlphabetQuestion(
+    imagePath: 'assets/images/star_04.png', // Add a picture of an elephant
+    audioPath: 'audio/eluwa.ogg',             // Add audio saying the word
+    options: ['ත', 'උ', 'එ'],
+    correctAnswer: 'ත', 
+  ),
 ]; 
