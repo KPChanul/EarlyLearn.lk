@@ -8,7 +8,7 @@ class AccountSettingsPage extends StatefulWidget {
   @override
   _AccountSettingsPageState createState() => _AccountSettingsPageState();
 }
-
+//controllers
 class _AccountSettingsPageState extends State<AccountSettingsPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -16,6 +16,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   final _confirmPasswordController = TextEditingController();
   final _currentPasswordController = TextEditingController();
   String _error = '';
+
+  final Color _green = const Color.fromARGB(255, 0, 93, 28);
 
   @override
   void initState() {
@@ -27,7 +29,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Account Settings'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('Account Settings'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Center(
@@ -118,7 +123,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           ),
         ),
       ),
-    );
+    ),)
   }
 
   void _saveChanges() {
@@ -156,7 +161,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     widget.account.setEmail(email);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Account updated successfully!'),
         backgroundColor: Colors.green,
       ),
