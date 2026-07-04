@@ -1,6 +1,5 @@
 import 'package:early_learn/account_management/account.dart';
 import 'package:early_learn/account_management/account_settings_page.dart';
-import 'package:early_learn/account_management/home_page.dart';
 import 'package:early_learn/account_management/login_page.dart';
 import 'package:early_learn/child_management/manage_child_page.dart';
 import 'package:early_learn/widgets/child_avatar.dart';
