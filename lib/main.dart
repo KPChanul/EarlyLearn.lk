@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EarlyLearn.lk',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.green),
       debugShowCheckedModeBanner: false,
       home: _buildHome(),
     );
