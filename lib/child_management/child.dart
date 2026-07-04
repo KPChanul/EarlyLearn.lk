@@ -21,6 +21,15 @@ class Child extends HiveObject {
 
   // Factory updated to initialize an empty map for quizMarks
   factory Child.create({required String name, required DateTime dob}) {
+    final trimmedName = name.trim();
+
+    if (trimmedName.isEmpty) {
+      throw ArgumentError("Child name cannot be empty.");
+    }
+
+    if (dob.isAfter(DateTime.now())) {
+      throw ArgumentError("Date of birth cannot be in the future.");
+    }
     return Child(name, dob, {1: 0, 2: 0, 3: 0},{});
   }
 

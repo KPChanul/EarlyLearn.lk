@@ -298,18 +298,70 @@ Widget build(BuildContext context) {
 
           ElevatedButton(
             onPressed: () {
-              if (widget.account.verifyPassword(controller.text)) {
-                Navigator.of(dialogContext).pop();
-                onConfirm();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Incorrect password!',
-               style: TextStyle(color: Color.fromARGB(255, 255, 94, 44))),
+            final password = controller.text.trim();
+
+            if (password.isEmpty) {
+              showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                title: const Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.red,
+                    ),
+                    SizedBox(width: 8),
+                    Text("Warning"),
+                  ],
+                ),
+                content: const Text(
+                  "Incorrect password!",
+                  style: TextStyle(fontSize: 16),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 0, 93, 28),
+                      ),
+                    ),
                   ),
-                );
-              }
-            },
+                ],
+              ),
+            );
+              return;
+            }
+
+            if (widget.account.verifyPassword(password)) {
+              Navigator.of(dialogContext).pop();
+              onConfirm();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.red.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  content: const Center(
+                    child: Text(
+                      "Incorrect password!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
             child: const Text('Confirm',
                style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
           ),
@@ -520,19 +572,59 @@ Widget build(BuildContext context) {
             ),
             ElevatedButton(
               onPressed: () {
-                if (nameController.text.isEmpty ||
-                    selectedDate == null) return;
+                final name = nameController.text.trim();
 
-                final child = Child.create(
-                  name: nameController.text.trim(),
-                  dob: selectedDate!,
+                if (name.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please enter the child's name."),
+                    ),
+                  );
+                  return;
+                }
+
+                if (selectedDate == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select the child's date of birth."),
+                    ),
+                  );
+                  return;
+                }
+                
+
+                // Check for duplicate child name
+                final exists = childBox.values.any(
+                  (child) => child.name.toLowerCase() == name.toLowerCase(),
                 );
 
-                childBox.add(child);
-                widget.account.setCurrentChild(child.name);
+                if (exists) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("A child with this name already exists."),
+                    ),
+                  );
+                  return;
+                }
+                // Create the child only after validation passes
+                try {
+                  final child = Child.create(
+                    name: name,
+                    dob: selectedDate!,
+                  );
 
-                Navigator.pop(context);
-                setState(() {});
+                  childBox.add(child);
+                  widget.account.setCurrentChild(child.name);
+
+                  Navigator.pop(context);
+                  setState(() {});
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                    ),
+                  );
+                }
               },
               child: const Text('Add',
                style: TextStyle(color: Color.fromARGB(255, 0, 93, 28))),
