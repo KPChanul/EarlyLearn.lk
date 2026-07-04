@@ -24,13 +24,11 @@ abstract class RewardDay {
 class CompletedRewardDay extends RewardDay {
   const CompletedRewardDay(
     int day, {
-    bool hasFreeze = false,
-    bool isCurrent = false,
+    super.hasFreeze = false,
+    super.isCurrent = false,
   }) : super._(
          day: day,
          isCompleted: true,
-         isCurrent: isCurrent,
-         hasFreeze: hasFreeze,
        );
 }
 
@@ -45,12 +43,11 @@ class FutureRewardDay extends RewardDay {
 }
 
 class PendingRewardDay extends RewardDay {
-  const PendingRewardDay(int day, {bool hasFreeze = false})
+  const PendingRewardDay(int day, {super.hasFreeze = false})
     : super._(
         day: day,
         isCompleted: false,
         isCurrent: false,
-        hasFreeze: hasFreeze,
       );
 }
 
@@ -133,7 +130,7 @@ class FreezeRewardDayTile extends RewardDayTile {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 52,
       child: Stack(
         alignment: Alignment.center,
