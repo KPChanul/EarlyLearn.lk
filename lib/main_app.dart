@@ -34,12 +34,14 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       title: "Early Learn",
       theme: ThemeData(
-        primaryColor: Colors.blue,
+        primaryColor: const Color(0xFF388E3C),
       ),
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: const Color(0xFF388E3C),
+          selectedItemColor: const Color(0xFFFFD54F),
+          unselectedItemColor: const Color(0xFFA5D6A7),
           currentIndex: _maincurrentIndex,
           onTap: (index) {
             setState(() {
@@ -50,7 +52,7 @@ class _MainAppState extends State<MainApp> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home),label: "HOME"),
             BottomNavigationBarItem(icon: Icon(Icons.map),label: "MAP"),
-            BottomNavigationBarItem(icon: Icon(Icons.gif_box_sharp),label: "REWARD"),
+            BottomNavigationBarItem(icon: Icon(Icons.redeem),label: "REWARD"),
             BottomNavigationBarItem(icon: Icon(Icons.person),label: "PROFILE"),
           ],
         ),
