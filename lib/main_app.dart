@@ -39,9 +39,9 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xFF388E3C),
-          selectedItemColor: const Color(0xFFFFD54F),
-          unselectedItemColor: const Color(0xFFA5D6A7),
+          backgroundColor: const Color.fromARGB(255, 2, 103, 7),
+          selectedItemColor: const Color.fromARGB(255, 250, 232, 172),
+          unselectedItemColor: const Color.fromARGB(255, 182, 246, 185),
           currentIndex: _maincurrentIndex,
           onTap: (index) {
             setState(() {
